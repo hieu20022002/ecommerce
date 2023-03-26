@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ecommerce/components/custom_surfix_icon.dart';
 import 'package:ecommerce/components/default_button.dart';
 import 'package:ecommerce/components/form_error.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../size_config.dart';
@@ -26,6 +27,7 @@ class _SignUpFormState extends State<SignUpForm> {
     prefs.setString('password', password!);
     Navigator.pushNamed(context, CompleteProfileScreen.routeName);
   }
+
 
   void addError({String? error}) {
     if (!errors.contains(error))
@@ -62,6 +64,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
                 // if all are valid then go to success screen
                 _register();
+
               }
             },
           ),
@@ -168,4 +171,6 @@ class _SignUpFormState extends State<SignUpForm> {
       ),
     );
   }
+
 }
+

@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/models/Adress.dart';
 import 'package:ecommerce/screens/profile/profile_screen.dart';
@@ -23,6 +24,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
   String? lastName;
   String? phoneNumber;
   String? address;
+
   void _saveForm() async {
     _formKey.currentState!.save();
     try {
@@ -56,6 +58,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       print('Error: $e');
     }
   }
+
 
   void addError({String? error}) {
     if (!errors.contains(error))
@@ -91,6 +94,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
             press: () {
               if (_formKey.currentState!.validate()) {
                 _saveForm();
+
               }
             },
           ),
@@ -196,3 +200,5 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
     );
   }
 }
+
+
