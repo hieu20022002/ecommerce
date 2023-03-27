@@ -2,6 +2,7 @@ import 'package:ecommerce/components/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce/enums.dart';
 
+import '../../components/custom_navbar.dart';
 import 'components/body.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -13,6 +14,7 @@ class ProfileScreen extends StatelessWidget {
         title: Text("Profile"),
       ),
       body: Body(),
+      bottomNavigationBar: CustomNavBar(selectedMenu: MenuState.profile),
     );
   }
 }
