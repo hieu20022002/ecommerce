@@ -3,6 +3,7 @@ import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../screens/cart/cart_screen.dart';
 import '../screens/home/components/icon_btn_with_counter.dart';
 import '../screens/home/components/search_field.dart';
 
@@ -24,7 +25,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
           SearchField(),
           IconBtnWithCounter(
             svgSrc: "assets/icons/Cart Icon.svg",
-            press: () {},
+            press: () => Navigator.pushNamed(context, CartScreen.routeName),
           ),
           IconBtnWithCounter(
             svgSrc: "assets/icons/Bell.svg",
