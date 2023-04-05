@@ -1,3 +1,5 @@
+import 'package:ecommerce/screens/sign_in/sign_in_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'profile_menu.dart';
 import 'profile_pic.dart';
@@ -34,7 +36,12 @@ class Body extends StatelessWidget {
           ProfileMenu(
             text: "Log Out",
             icon: "assets/icons/Log out.svg",
-            press: () {},
+            press: ()  async =>  {
+              await FirebaseAuth.instance.signOut(),
+              Navigator.pushNamed(context, SignInScreen.routeName),
+              
+            }
+            
           ),
         ],
       ),

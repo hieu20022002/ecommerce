@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce/models/Adress.dart';
+import 'package:ecommerce/screens/profile/profile_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ecommerce/models/User.dart' as MyUser;
 import 'package:ecommerce/components/custom_surfix_icon.dart';
 import 'package:ecommerce/components/default_button.dart';
 import 'package:ecommerce/components/form_error.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../size_config.dart';
 import '../../constants.dart';
-import '../../otp/otp_screen.dart';
 
 class CompleteProfileForm extends StatefulWidget {
   @override
@@ -19,6 +23,39 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
   String? lastName;
   String? phoneNumber;
   String? address;
+  void _saveForm() async {
+    _formKey.currentState!.save();
+    try {
+      // Lấy thông tin người dùng đăng nhập từ FirebaseAuth
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      String email = prefs.getString('email')!;
+      String password = prefs.getString('password')!;
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      final user = FirebaseAuth.instance.currentUser; 
+      final newUser = MyUser.User(        
+        firstName: firstName,
+        lastName: lastName,
+        phonenumber: phoneNumber,
+        email: prefs.getString('email'),
+        modified_at: DateTime.now(),
+        created_at: DateTime.now(),
+      );
+      await newUser.save();
+      final newAdress = Address(
+          userId: user?.uid,
+          addressLine: address,
+          receiver: "${newUser.firstName} ${newUser.lastName}",
+          phoneNumber: newUser.phonenumber);
+
+      await newAdress.save();
+      // Chuyển hướng đến màn hình OTP để xác nhận số điện thoại
+      Navigator.pushNamed(context, ProfileScreen.routeName);
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   void addError({String? error}) {
     if (!errors.contains(error))
@@ -53,7 +90,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
             text: "continue",
             press: () {
               if (_formKey.currentState!.validate()) {
-                Navigator.pushNamed(context, OtpScreen.routeName);
+                _saveForm();
               }
             },
           ),

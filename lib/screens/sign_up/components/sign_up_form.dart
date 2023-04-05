@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ecommerce/components/custom_surfix_icon.dart';
 import 'package:ecommerce/components/default_button.dart';
 import 'package:ecommerce/components/form_error.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../size_config.dart';
 import '../../complete_profile/complete_profile_screen.dart';
 import '../../constants.dart';
-
 
 class SignUpForm extends StatefulWidget {
   @override
@@ -20,6 +20,12 @@ class _SignUpFormState extends State<SignUpForm> {
   String? conform_password;
   bool remember = false;
   final List<String?> errors = [];
+  void _register() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('email', email!);
+    prefs.setString('password', password!);
+    Navigator.pushNamed(context, CompleteProfileScreen.routeName);
+  }
 
   void addError({String? error}) {
     if (!errors.contains(error))
@@ -53,8 +59,9 @@ class _SignUpFormState extends State<SignUpForm> {
             press: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+
                 // if all are valid then go to success screen
-                Navigator.pushNamed(context, CompleteProfileScreen.routeName);
+                _register();
               }
             },
           ),
