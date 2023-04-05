@@ -2,8 +2,8 @@ import 'package:ecommerce/components/custom_surfix_icon.dart';
 import 'package:ecommerce/components/default_button.dart';
 import 'package:ecommerce/components/form_error.dart';
 import 'package:ecommerce/helper/keyboard.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../../../size_config.dart';
 import '../../constants.dart';
 import '../../forgot_password/forgot_password_screen.dart';
@@ -20,6 +20,7 @@ class _SignFormState extends State<SignForm> {
   String? password;
   bool? remember = false;
   final List<String?> errors = [];
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
   void addError({String? error}) {
     if (!errors.contains(error))
@@ -34,6 +35,7 @@ class _SignFormState extends State<SignForm> {
         errors.remove(error);
       });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -73,12 +75,26 @@ class _SignFormState extends State<SignForm> {
           SizedBox(height: getProportionateScreenHeight(20)),
           DefaultButton(
             text: "Continue",
-            press: () {
+            press: () async {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
+                try {
+                  UserCredential userCredential =
+                      await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: email!,
+                    password: password!,
+                  );
+                  User user = userCredential.user!;
+                  KeyboardUtil.hideKeyboard(context);
+                  Navigator.pushNamed(context, LoginSuccessScreen.routeName, arguments: user);
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'user-not-found') {
+                    addError(error: kInvalidEmailError);
+                  } else if (e.code == 'wrong-password') {
+                    addError(error: kInvalidPasswordError);
+                  }
+                }
                 // if all are valid then go to success screen
-                KeyboardUtil.hideKeyboard(context);
-                Navigator.pushNamed(context, LoginSuccessScreen.routeName);
               }
             },
           ),
@@ -109,7 +125,9 @@ class _SignFormState extends State<SignForm> {
         }
         return null;
       },
+      
       decoration: InputDecoration(
+        
         labelText: "Password",
         hintText: "Enter your password",
         // If  you are using latest version of flutter then lable text and hint text shown like this

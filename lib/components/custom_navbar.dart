@@ -1,4 +1,5 @@
 import 'package:ecommerce/screens/constants.dart';
+import 'package:ecommerce/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -61,7 +62,8 @@ class CustomNavBar extends StatelessWidget {
                       ? kPrimaryColor
                       : inActiveIconColor,
                 ),
-                onPressed: () {}
+
+                onPressed: () => Navigator.pushNamed(context, ProfileScreen.routeName),
               ),
             ],
           )),

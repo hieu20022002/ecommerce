@@ -1,32 +1,42 @@
-
+import 'package:ecommerce/controller/categorycontroller.dart';
+import 'package:ecommerce/models/Category.dart';
 import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+class Categories extends StatefulWidget {
+  @override
+  _CategoriesState createState() => _CategoriesState();
+}
 
-class Categories extends StatelessWidget {
+class _CategoriesState extends State<Categories> {
+  List<Category> _categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    final categories = await CategoryController.getCategories();
+    setState(() {
+      _categories = categories;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    List<Map<String, dynamic>> categories = [
-      {"icon": "assets/icons/Flash Icon.svg", "text": "Flash Deal"},
-      {"icon": "assets/icons/Bill Icon.svg", "text": "Bill"},
-      {"icon": "assets/icons/Game Icon.svg", "text": "Game"},
-      {"icon": "assets/icons/Gift Icon.svg", "text": "Daily Gift"},
-      {"icon": "assets/icons/Discover.svg", "text": "More"},
-    ];
-    return Padding(
-      padding: EdgeInsets.all(getProportionateScreenWidth(20)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(
-          categories.length,
-          (index) => CategoryCard(
-            icon: categories[index]["icon"],
-            text: categories[index]["text"],
-            press: () {},
-          ),
+
+    return SizedBox(
+      height: getProportionateScreenWidth(80),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _categories.length,
+        itemBuilder: (context, index) => CategoryCard(
+          text: _categories[index].name,
+          press: () {},
         ),
       ),
     );
@@ -36,35 +46,29 @@ class Categories extends StatelessWidget {
 class CategoryCard extends StatelessWidget {
   const CategoryCard({
     Key? key,
-    required this.icon,
     required this.text,
     required this.press,
   }) : super(key: key);
 
-  final String? icon, text;
+  final String text;
   final GestureTapCallback press;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: press,
-      child: SizedBox(
-        width: getProportionateScreenWidth(55),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(getProportionateScreenWidth(15)),
-              height: getProportionateScreenWidth(55),
-              width: getProportionateScreenWidth(55),
-              decoration: BoxDecoration(
-                color: Color(0xFFFFECDF),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: SvgPicture.asset(icon!),
-            ),
-            SizedBox(height: 5),
-            Text(text!, textAlign: TextAlign.center)
-          ],
+      child: Padding(
+        padding: EdgeInsets.only(right: getProportionateScreenWidth(10)),
+        child: SizedBox(
+          width: getProportionateScreenWidth(55),
+          child: Column(
+            children: [
+              
+              SizedBox(height: 5),
+              Text(text, 
+              textAlign: TextAlign.center)
+            ],
+          ),
         ),
       ),
     );
