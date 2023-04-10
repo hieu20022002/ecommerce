@@ -11,7 +11,7 @@ class Address {
 
   factory Address.fromDocument(DocumentSnapshot doc) {
     return Address(
-      id: doc.id,
+      id: doc['id'],
       userId: doc['user_id'],
       receiver: doc['receiver'],
       phoneNumber: doc['phonenumber'],

@@ -1,4 +1,9 @@
-import 'package:ecommerce/screens/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:ecommerce/models/User.dart' as MyUser;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyAccountScreen extends StatefulWidget {
@@ -8,28 +13,37 @@ class MyAccountScreen extends StatefulWidget {
 }
 
 class _MyAccountScreenState extends State<MyAccountScreen> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   // Khai báo các biến để lưu thông tin người dùng
-  String _email = 'example@gmail.com';
-  String _fullName = 'Nguyễn Văn A';
-  String _phoneNumber = '0987654321';
-  String _address = '123 Đường ABC, Quận XYZ, Thành phố HCM';
+  MyUser.User myaccount = new MyUser.User();
 
   // Khai báo các biến để lưu thông tin người dùng khi cập nhật
-  String _newPhoneNumber = '';
-  String _newAddress = '';
+  @override
+  void initState() {
+    super.initState();
+    _getUserInfo();
+  }
 
-  // Hàm để cập nhật thông tin người dùng
-  void _updateUserInfo() {
-    setState(() {
-      if (_newPhoneNumber != '') {
-        _phoneNumber = _newPhoneNumber;
-        _newPhoneNumber = '';
-      }
-      if (_newAddress != '') {
-        _address = _newAddress;
-        _newAddress = '';
-      }
-    });
+  void _getUserInfo() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      
+      DocumentSnapshot snapshot =
+          await _firestore.collection('User').doc(user.uid).get();
+      myaccount.fromDocumentSnapshot(snapshot);
+      setState(() {});
+    }
+  }
+    // Hàm để cập nhật thông tin người dùng
+  void _updateUserInfo() async {
+    
+    if (myaccount != null) {
+      myaccount.modified_at=DateTime.now();
+      myaccount.save();
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -43,37 +57,38 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         children: [
           Text(
             "Edit Profile",
-            style: headingStyle,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           ListTile(
             title: Text('Email'),
-            subtitle: Text(_email),
+            subtitle: Text(myaccount.email.toString()),
           ),
           ListTile(
-            title: Text('Full Name'),
-            subtitle: Text(_fullName),
+            title: Text('First Name'),
+            subtitle: TextField(
+              controller: TextEditingController(text: myaccount.firstName),
+               onChanged: (value){
+                myaccount.firstName = value;
+               }),
+          ),
+          ListTile(
+            title: Text('Last Name'),
+            subtitle: TextField(
+              controller: TextEditingController(text: myaccount.lastName),
+               onChanged: (value){
+                myaccount.lastName = value;
+               }),
           ),
           ListTile(
             title: Text('Phone Number'),
-            subtitle: TextFormField(
-              initialValue: _phoneNumber,
-              onChanged: (value) {
-                _newPhoneNumber = value;
-              },
-            ),
-          ),
-          ListTile(
-            title: Text('Address'),
-            subtitle: TextFormField(
-              initialValue: _address,
-              onChanged: (value) {
-                _newAddress = value;
-              },
-            ),
+            subtitle: TextField(
+              controller: TextEditingController(text: myaccount.phonenumber),
+               onChanged: (value){
+                myaccount.phonenumber = value;
+               }),
           ),
           SizedBox(height: 20),
-          //
           Container(
             width: double.infinity,
             height: 50,
