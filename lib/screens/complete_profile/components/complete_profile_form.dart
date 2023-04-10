@@ -36,7 +36,8 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       final user = FirebaseAuth.instance.currentUser; 
-      final newUser = MyUser.User(        
+      final newUser = MyUser.User(     
+        id:  user?.uid,  
         firstName: firstName,
         lastName: lastName,
         phonenumber: phoneNumber,
@@ -44,9 +45,9 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         modified_at: DateTime.now(),
         created_at: DateTime.now(),
       );
-      await newUser.save();
+      await newUser.SignUp();
       final newAdress = Address(
-          userId: user?.uid,
+          userId: newUser.id,
           addressLine: address,
           receiver: "${newUser.firstName} ${newUser.lastName}",
           phoneNumber: newUser.phonenumber);
