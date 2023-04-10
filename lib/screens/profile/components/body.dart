@@ -1,3 +1,4 @@
+import 'package:ecommerce/screens/my_account/my_account.dart';
 import 'package:ecommerce/screens/sign_in/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +17,16 @@ class Body extends StatelessWidget {
           ProfileMenu(
             text: "My Account",
             icon: "assets/icons/User Icon.svg",
-            press: () => {},
+            press: () => {
+              Navigator.pushNamed(context, MyAccountScreen.routeName)
+            },
           ),
           ProfileMenu(
             text: "Notifications",
             icon: "assets/icons/Bell.svg",
-            press: () {},
+            press: () {
+                
+            },
           ),
           ProfileMenu(
             text: "Settings",
@@ -39,7 +44,6 @@ class Body extends StatelessWidget {
             press: ()  async =>  {
               await FirebaseAuth.instance.signOut(),
               Navigator.pushNamed(context, SignInScreen.routeName),
-              
             }
             
           ),

@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/models/Adress.dart';
 import 'package:ecommerce/screens/profile/profile_screen.dart';
@@ -23,6 +24,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
   String? lastName;
   String? phoneNumber;
   String? address;
+
   void _saveForm() async {
     _formKey.currentState!.save();
     try {
@@ -34,7 +36,8 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       final user = FirebaseAuth.instance.currentUser; 
-      final newUser = MyUser.User(        
+      final newUser = MyUser.User(     
+        id:  user?.uid,  
         firstName: firstName,
         lastName: lastName,
         phonenumber: phoneNumber,
@@ -42,9 +45,9 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         modified_at: DateTime.now(),
         created_at: DateTime.now(),
       );
-      await newUser.save();
+      await newUser.SignUp();
       final newAdress = Address(
-          userId: user?.uid,
+          userId: newUser.id,
           addressLine: address,
           receiver: "${newUser.firstName} ${newUser.lastName}",
           phoneNumber: newUser.phonenumber);
@@ -56,6 +59,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       print('Error: $e');
     }
   }
+
 
   void addError({String? error}) {
     if (!errors.contains(error))
@@ -91,6 +95,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
             press: () {
               if (_formKey.currentState!.validate()) {
                 _saveForm();
+
               }
             },
           ),
@@ -196,3 +201,5 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
     );
   }
 }
+
+
