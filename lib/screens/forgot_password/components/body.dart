@@ -6,7 +6,9 @@ import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+final FirebaseAuth auth = FirebaseAuth.instance;
 
 class Body extends StatelessWidget {
   @override
@@ -52,6 +54,28 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
   final _formKey = GlobalKey<FormState>();
   List<String> errors = [];
   String? email;
+
+Future<void>resetPassword() async{
+  if (_formKey.currentState!.validate()) {
+_formKey.currentState!.save();
+try{
+  await auth.sendPasswordResetEmail(email: email!);
+  //show success mesage to the user
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text("Password reset link sent to $email")),
+  );
+} on FirebaseAuthException catch (e){
+  if(e.code == 'user-not-found'){
+    //show an error message to the user
+    ScaffoldMessenger.of(context).showSnackBar(
+     SnackBar(content: Text("No user found for that email")),
+    );
+  }
+}
+}
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -102,9 +126,7 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
           DefaultButton(
             text: "Continue",
             press: () {
-              if (_formKey.currentState!.validate()) {
-                // Do what you want to do
-              }
+               resetPassword();
             },
           ),
           SizedBox(height: SizeConfig.screenHeight * 0.1),
