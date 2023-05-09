@@ -1,4 +1,4 @@
-import 'package:ecommerce/controller/categorycontroller.dart';
+import 'package:ecommerce/controller/CategoryController.dart';
 import 'package:ecommerce/models/Category.dart';
 import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
@@ -10,18 +10,19 @@ class Categories extends StatefulWidget {
 }
 
 class _CategoriesState extends State<Categories> {
+  final categoryController = CategoryController();
   List<Category> _categories = [];
 
   @override
   void initState() {
     super.initState();
-    _loadCategories();
+    fetchCategories();
   }
 
-  Future<void> _loadCategories() async {
-    final categories = await CategoryController.getCategories();
+  Future<void> fetchCategories() async {
+    await categoryController.fetchCategories();
+    _categories = categoryController.categories;
     setState(() {
-      _categories = categories;
     });
   }
 

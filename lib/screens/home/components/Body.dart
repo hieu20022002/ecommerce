@@ -1,11 +1,12 @@
 import 'package:ecommerce/components/custom_appbar.dart';
+import 'package:ecommerce/screens/home/components/brands.dart';
 import 'package:ecommerce/screens/home/components/categories.dart';
 import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
 
 import 'discount_banner.dart';
 import 'popular_products.dart';
-import 'special_offers.dart';
+import 'topnew_products.dart';
 
 class Body extends StatelessWidget {
   @override
@@ -20,9 +21,11 @@ class Body extends StatelessWidget {
             SizedBox(height: getProportionateScreenWidth(10)),
             DiscountBanner(),
             Categories(),
-            SpecialOffers(),
+            Brands(),
             SizedBox(height: getProportionateScreenWidth(30)),
             PopularProducts(),
+            SizedBox(height: getProportionateScreenWidth(30)),
+            TopNewProducts(),
             SizedBox(height: getProportionateScreenWidth(30)),
           ],
         ),

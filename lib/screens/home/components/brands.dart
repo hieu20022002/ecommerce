@@ -1,22 +1,43 @@
+import 'package:ecommerce/controller/BrandController.dart';
+import 'package:ecommerce/models/Brand.dart';
 import 'package:flutter/material.dart';
 import '../../../size_config.dart';
 import 'section_title.dart';
 
-class SpecialOffers extends StatelessWidget {
-  const SpecialOffers({
-    Key? key,
-  }) : super(key: key);
+class Brands extends StatefulWidget {
+  @override
+  _BrandsState createState() => _BrandsState();
+}
+
+class _BrandsState extends State<Brands> {
+  final BrandController brandController = BrandController();
+  List<Brand> _brands = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBrands();
+  }
+
+  Future<void> fetchBrands() async {
+    await brandController.fetchBrands();
+    setState(() {
+      _brands = brandController.brands;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    ;
     return Column(
       children: [
         Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+          padding: EdgeInsets.symmetric(
+            horizontal: getProportionateScreenWidth(20),
+          ),
           child: SectionTitle(
-            title: "Special for you",
+            title: "Brands",
             press: () {},
           ),
         ),
@@ -24,21 +45,21 @@ class SpecialOffers extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [
-              SpecialOfferCard(
-                image: "assets/images/Image Banner 2.png",
-                category: "Smartphone",
-                numOfBrands: 18,
-                press: () {},
-              ),
-              SpecialOfferCard(
-                image: "assets/images/Image Banner 3.png",
-                category: "Fashion",
-                numOfBrands: 24,
-                press: () {},
-              ),
-              SizedBox(width: getProportionateScreenWidth(20)),
-            ],
+            children: _brands
+                .map(
+                  (brand) => Padding(
+                    padding: EdgeInsets.only(
+                      right: getProportionateScreenWidth(20),
+                    ),
+                    child: BrandCard(
+                      brand: brand,
+                      press: () {},
+                      numberProductofBrand: brandController
+                          .getProductCountByBrand(brand.id),
+                    ),
+                  ),
+                )
+                .toList(),
           ),
         ),
       ],
@@ -46,21 +67,21 @@ class SpecialOffers extends StatelessWidget {
   }
 }
 
-class SpecialOfferCard extends StatelessWidget {
-  const SpecialOfferCard({
+class BrandCard extends StatelessWidget {
+  const BrandCard({
     Key? key,
-    required this.category,
-    required this.image,
-    required this.numOfBrands,
+    required this.brand,
     required this.press,
+    required this.numberProductofBrand,
   }) : super(key: key);
 
-  final String category, image;
-  final int numOfBrands;
+  final Brand brand;
   final GestureTapCallback press;
+  final int numberProductofBrand;
 
   @override
   Widget build(BuildContext context) {
+    String brandName = brand.name;
     return Padding(
       padding: EdgeInsets.only(left: getProportionateScreenWidth(20)),
       child: GestureDetector(
@@ -72,8 +93,8 @@ class SpecialOfferCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: Stack(
               children: [
-                Image.asset(
-                  image,
+                Image.network(
+                  brand.image,
                   fit: BoxFit.cover,
                 ),
                 Container(
@@ -98,13 +119,15 @@ class SpecialOfferCard extends StatelessWidget {
                       style: TextStyle(color: Colors.white),
                       children: [
                         TextSpan(
-                          text: "$category\n",
+                          text: "$brandName\n",
                           style: TextStyle(
                             fontSize: getProportionateScreenWidth(18),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextSpan(text: "$numOfBrands Brands")
+                        TextSpan(
+                          text: "$numberProductofBrand Products",
+                        )
                       ],
                     ),
                   ),

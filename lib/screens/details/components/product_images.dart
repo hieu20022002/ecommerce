@@ -1,7 +1,7 @@
+import 'package:ecommerce/models/Product.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import '../../../models/Product.dart';
 import '../../../size_config.dart';
-import '../../constants.dart';
 
 class ProductImages extends StatefulWidget {
   const ProductImages({
@@ -17,6 +17,7 @@ class ProductImages extends StatefulWidget {
 
 class _ProductImagesState extends State<ProductImages> {
   int selectedImage = 0;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -27,44 +28,29 @@ class _ProductImagesState extends State<ProductImages> {
             aspectRatio: 1,
             child: Hero(
               tag: widget.product.id.toString(),
-              child: Image.asset(widget.product.images[selectedImage]),
+              child: FutureBuilder(
+                future: FirebaseStorage.instance
+                    .ref()
+                    .child(widget.product.imageUrl)
+                    .getDownloadURL(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<String> snapshot) {
+                  if (snapshot.hasData) {
+                    return Image.network(
+                      snapshot.data!,
+                      fit: BoxFit.cover,
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ),
-        // SizedBox(height: getProportionateScreenWidth(20)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ...List.generate(widget.product.images.length,
-                (index) => buildSmallProductPreview(index)),
-          ],
-        )
       ],
-    );
-  }
-
-  GestureDetector buildSmallProductPreview(int index) {
-    SizeConfig().init(context);
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedImage = index;
-        });
-      },
-      child: AnimatedContainer(
-        duration: defaultDuration,
-        margin: EdgeInsets.only(right: 15),
-        padding: EdgeInsets.all(8),
-        height: getProportionateScreenWidth(48),
-        width: getProportionateScreenWidth(48),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-              color: kPrimaryColor.withOpacity(selectedImage == index ? 1 : 0)),
-        ),
-        child: Image.asset(widget.product.images[index]),
-      ),
     );
   }
 }
