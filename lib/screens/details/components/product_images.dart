@@ -1,22 +1,46 @@
+import 'package:ecommerce/models/Product.dart';
+import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
-import '../../../models/Product.dart';
-import '../../../size_config.dart';
-import '../../constants.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-class ProductImages extends StatefulWidget {
-  const ProductImages({
+class ProductImage extends StatefulWidget {
+  final Product product;
+
+  const ProductImage({
     Key? key,
     required this.product,
   }) : super(key: key);
 
-  final Product product;
-
   @override
-  _ProductImagesState createState() => _ProductImagesState();
+  _ProductImageState createState() => _ProductImageState();
 }
 
-class _ProductImagesState extends State<ProductImages> {
-  int selectedImage = 0;
+class _ProductImageState extends State<ProductImage> {
+  late ImageProvider productImage;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  Future<void> _loadImage() async {
+    try {
+      firebase_storage.FirebaseStorage storage =
+          firebase_storage.FirebaseStorage.instance;
+
+      String downloadURL =
+          await storage.refFromURL(widget.product.imageUrl).getDownloadURL();
+      setState(() {
+        productImage = NetworkImage(downloadURL);
+        isLoading = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -27,44 +51,13 @@ class _ProductImagesState extends State<ProductImages> {
             aspectRatio: 1,
             child: Hero(
               tag: widget.product.id.toString(),
-              child: Image.asset(widget.product.images[selectedImage]),
+              child: isLoading
+                  ? CircularProgressIndicator()
+                  : Image(image: productImage),
             ),
           ),
         ),
-        // SizedBox(height: getProportionateScreenWidth(20)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ...List.generate(widget.product.images.length,
-                (index) => buildSmallProductPreview(index)),
-          ],
-        )
       ],
-    );
-  }
-
-  GestureDetector buildSmallProductPreview(int index) {
-    SizeConfig().init(context);
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedImage = index;
-        });
-      },
-      child: AnimatedContainer(
-        duration: defaultDuration,
-        margin: EdgeInsets.only(right: 15),
-        padding: EdgeInsets.all(8),
-        height: getProportionateScreenWidth(48),
-        width: getProportionateScreenWidth(48),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-              color: kPrimaryColor.withOpacity(selectedImage == index ? 1 : 0)),
-        ),
-        child: Image.asset(widget.product.images[index]),
-      ),
     );
   }
 }

@@ -4,8 +4,9 @@ import '../../../models/Product.dart';
 import '../../../size_config.dart';
 import 'color_dots.dart';
 import 'product_description.dart';
-import 'top_rounded_container.dart';
 import 'product_images.dart';
+import 'top_rounded_container.dart';
+
 
 class Body extends StatelessWidget {
   final Product product;
@@ -17,7 +18,7 @@ class Body extends StatelessWidget {
     SizeConfig().init(context);
     return ListView(
       children: [
-        ProductImages(product: product),
+        ProductImage(product: product),
         TopRoundedContainer(
           color: Colors.white,
           child: Column(
@@ -56,3 +57,4 @@ class Body extends StatelessWidget {
     );
   }
 }
+

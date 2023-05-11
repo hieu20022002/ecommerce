@@ -49,7 +49,7 @@ class CustomNavBar extends StatelessWidget {
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Heart Icon.svg"),
-                onPressed: () {},
+                onPressed: () {}
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg"),
@@ -62,8 +62,8 @@ class CustomNavBar extends StatelessWidget {
                       ? kPrimaryColor
                       : inActiveIconColor,
                 ),
-
-                onPressed: () => Navigator.pushNamed(context, ProfileScreen.routeName),
+                onPressed: () =>
+                    Navigator.pushNamed(context, ProfileScreen.routeName),
               ),
             ],
           )),

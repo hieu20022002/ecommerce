@@ -22,9 +22,9 @@ class ColorDots extends StatelessWidget {
       child: Row(
         children: [
           ...List.generate(
-            product.colors.length,
+            1,
             (index) => ColorDot(
-              color: product.colors[index],
+              color: Colors.white,
               isSelected: index == selectedColor,
             ),
           ),
@@ -44,7 +44,6 @@ class ColorDots extends StatelessWidget {
     );
   }
 }
-
 class ColorDot extends StatelessWidget {
   const ColorDot({
     Key? key,
