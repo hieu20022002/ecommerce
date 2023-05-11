@@ -1,22 +1,45 @@
 import 'package:ecommerce/models/Product.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
-import '../../../size_config.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
-class ProductImages extends StatefulWidget {
-  const ProductImages({
+class ProductImage extends StatefulWidget {
+  final Product product;
+
+  const ProductImage({
     Key? key,
     required this.product,
   }) : super(key: key);
 
-  final Product product;
-
   @override
-  _ProductImagesState createState() => _ProductImagesState();
+  _ProductImageState createState() => _ProductImageState();
 }
 
-class _ProductImagesState extends State<ProductImages> {
-  int selectedImage = 0;
+class _ProductImageState extends State<ProductImage> {
+  late ImageProvider productImage;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  Future<void> _loadImage() async {
+    try {
+      firebase_storage.FirebaseStorage storage =
+          firebase_storage.FirebaseStorage.instance;
+
+      String downloadURL =
+          await storage.refFromURL(widget.product.imageUrl).getDownloadURL();
+      setState(() {
+        productImage = NetworkImage(downloadURL);
+        isLoading = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,25 +51,9 @@ class _ProductImagesState extends State<ProductImages> {
             aspectRatio: 1,
             child: Hero(
               tag: widget.product.id.toString(),
-              child: FutureBuilder(
-                future: FirebaseStorage.instance
-                    .ref()
-                    .child(widget.product.imageUrl)
-                    .getDownloadURL(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<String> snapshot) {
-                  if (snapshot.hasData) {
-                    return Image.network(
-                      snapshot.data!,
-                      fit: BoxFit.cover,
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
+              child: isLoading
+                  ? CircularProgressIndicator()
+                  : Image(image: productImage),
             ),
           ),
         ),
