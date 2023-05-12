@@ -125,9 +125,6 @@ class BrandCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextSpan(
-                          text: "$numberProductofBrand Products",
-                        )
                       ],
                     ),
                   ),
