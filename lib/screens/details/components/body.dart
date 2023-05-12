@@ -1,8 +1,8 @@
+import 'package:ecommerce/screens/details/components/ProductPrice.dart';
 import 'package:flutter/material.dart';
 import '../../../components/default_button.dart';
 import '../../../models/Product.dart';
 import '../../../size_config.dart';
-import 'color_dots.dart';
 import 'product_description.dart';
 import 'product_images.dart';
 import 'top_rounded_container.dart';
@@ -31,7 +31,7 @@ class Body extends StatelessWidget {
                 color: Color(0xFFF6F7F9),
                 child: Column(
                   children: [
-                    ColorDots(product: product),
+                    ProductPrice(product: product),
                     TopRoundedContainer(
                       color: Colors.white,
                       child: Padding(
