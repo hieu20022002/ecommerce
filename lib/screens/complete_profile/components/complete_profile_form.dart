@@ -36,8 +36,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       final user = FirebaseAuth.instance.currentUser; 
-      final newUser = MyUser.User(     
-        id:  user?.uid,  
+      final newUser = MyUser.User(      
         firstName: firstName,
         lastName: lastName,
         phonenumber: phoneNumber,
@@ -47,13 +46,13 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       );
       await newUser.SignUp();
       final newAdress = Address(
-          userId: newUser.id,
+          userId: newUser.id!,
           addressLine: address,
           receiver: "${newUser.firstName} ${newUser.lastName}",
           phoneNumber: newUser.phonenumber);
 
       await newAdress.save();
-      // Chuyển hướng đến màn hình OTP để xác nhận số điện thoại
+      
       Navigator.pushNamed(context, ProfileScreen.routeName);
     } catch (e) {
       print('Error: $e');

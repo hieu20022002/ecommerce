@@ -28,7 +28,7 @@ class User {
   factory User.fromDocument(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return User(
-      id: data['id'],
+      id: doc.id,
       firstName: data['firstName'],
       lastName: data['lastName'],
       email: data['email'],
@@ -63,7 +63,7 @@ class User {
     void fromDocumentSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
     if (data != null) {
-      id = data['id'] ?? '';
+      id = snapshot.id;
       firstName = data['firstName'] ?? '';
       lastName = data['lastName'] ?? '';
       email = data['email'] ?? '';
