@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/models/Adress.dart';
+import 'package:ecommerce/models/Cart.dart';
 import 'package:ecommerce/screens/profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         modified_at: DateTime.now(),
         created_at: DateTime.now(),
       );
-      await newUser.SignUp();
+      await newUser.save();
       final newAdress = Address(
           userId: newUser.id!,
           addressLine: address,
@@ -52,7 +53,11 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
           phoneNumber: newUser.phonenumber);
 
       await newAdress.save();
-      
+      final newCart =Cart(
+        userId: newUser.id!,
+        total: 0,
+      );
+      await newCart.save();
       Navigator.pushNamed(context, ProfileScreen.routeName);
     } catch (e) {
       print('Error: $e');

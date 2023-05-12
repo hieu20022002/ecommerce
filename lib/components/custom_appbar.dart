@@ -25,7 +25,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
           SearchField(),
           IconBtnWithCounter(
             svgSrc: "assets/icons/Cart Icon.svg",
-            press: () => Navigator.pushNamed(context, CartScreen.routeName),
+            press: () {},
           ),
           IconBtnWithCounter(
             svgSrc: "assets/icons/Bell.svg",

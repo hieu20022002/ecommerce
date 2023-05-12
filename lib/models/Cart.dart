@@ -1,17 +1,49 @@
-import 'package:ecommerce/models/FakeProduct.dart';
-import 'package:flutter/material.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce/models/CartDetail.dart';
 
 class Cart {
-  final FakeProduct product;
-  final int numOfItem;
+  String? id;
+  String? userId;
+  double? total;
+  List<CartDetail>? cartDetails;
 
-  Cart({required this.product, required this.numOfItem});
+  Cart({
+    this.id,
+    this.userId,
+    this.total,
+    this.cartDetails,
+  });
+
+  factory Cart.fromFirestore(DocumentSnapshot doc) {
+    Map data = doc.data() as Map<String, dynamic>;
+    List cartDetailsList = data['cartDetails'] ?? [];
+
+    return Cart(
+      id: doc.id,
+      userId: data['user_id'] ?? '',
+      total: (data['total'] ?? 0.0).toDouble(),
+      cartDetails: cartDetailsList
+          .map((detail) => CartDetail.fromMap(detail))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'user_id': userId,
+      'total': total,
+      'cartDetails': cartDetails?.map((detail) => detail.toMap()).toList() ?? [],
+    };
+  }
+  Future<void> save() async {
+    final data = toMap();
+
+    if (this.id != null) {
+      await FirebaseFirestore.instance.collection('Cart').doc(this.id).update(data);
+    } else {
+      final docRef = await FirebaseFirestore.instance.collection('Cart').add(data);
+      this.id = docRef.id;
+    }
+  }
 }
-
-// Demo data for our cart
-
-List<Cart> demoCarts = [
-  Cart(product: demoProducts[0], numOfItem: 2),
-  Cart(product: demoProducts[1], numOfItem: 1),
-  Cart(product: demoProducts[3], numOfItem: 1),
-];
