@@ -1,17 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce/models/Product.dart';
 import 'package:flutter/material.dart';
+
 class ProductController extends ChangeNotifier {
   List<Product> _products = [];
-
   List<Product> get products => _products;
-
   void setProducts(List<Product> products) {
-    for( var i=0; i < products.length; i++ ) {
+    for (var i = 0; i < products.length; i++) {
       _products.add(products[i]);
     }
     notifyListeners();
   }
+
   Future<void> fetchProducts() async {
     try {
       List<Product> products = await Product.getProducts();
@@ -69,4 +70,5 @@ class ProductController extends ChangeNotifier {
     sortedProducts.sort((a, b) => b.createdDate.compareTo(a.createdDate));
     return sortedProducts;
   }
+
 }
