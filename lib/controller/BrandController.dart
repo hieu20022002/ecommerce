@@ -26,5 +26,5 @@ class BrandController extends ChangeNotifier {
     ProductCountByBrand(brandId);
     return this.countProduct;
   }
-
+  
 }

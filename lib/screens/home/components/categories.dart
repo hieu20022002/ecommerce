@@ -1,5 +1,6 @@
 import 'package:ecommerce/controller/CategoryController.dart';
 import 'package:ecommerce/models/Category.dart';
+import 'package:ecommerce/screens/home/components/category_product.dart';
 import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,8 +23,7 @@ class _CategoriesState extends State<Categories> {
   Future<void> fetchCategories() async {
     await categoryController.fetchCategories();
     _categories = categoryController.categories;
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
@@ -36,8 +36,18 @@ class _CategoriesState extends State<Categories> {
         scrollDirection: Axis.horizontal,
         itemCount: _categories.length,
         itemBuilder: (context, index) => CategoryCard(
+          icon: _categories[index].icon,
           text: _categories[index].name,
-          press: () {},
+          press: () {
+            String categoryName = _categories[index].name;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    ProductsScreen(categoryName: categoryName),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -48,10 +58,13 @@ class CategoryCard extends StatelessWidget {
   const CategoryCard({
     Key? key,
     required this.text,
+    //icon of categories
+    required this.icon,
     required this.press,
   }) : super(key: key);
 
   final String text;
+  final String icon;
   final GestureTapCallback press;
 
   @override
@@ -64,10 +77,8 @@ class CategoryCard extends StatelessWidget {
           width: getProportionateScreenWidth(55),
           child: Column(
             children: [
-              
               SizedBox(height: 5),
-              Text(text, 
-              textAlign: TextAlign.center)
+              Text(text, textAlign: TextAlign.center)
             ],
           ),
         ),

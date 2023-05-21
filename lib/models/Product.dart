@@ -40,6 +40,7 @@ class Product{
       createdDate: data['createdDate'].toDate(),
     );
   }
+
   static Future<List<Product>> getProducts() async {
     QuerySnapshot querySnapshot =
     await FirebaseFirestore.instance.collection('Products').get();
@@ -48,5 +49,4 @@ class Product{
         .toList();
     return products;
   }
-
 }
