@@ -25,6 +25,7 @@ class _BodyState extends State<Body> {
     User? user = _auth.currentUser;
     if (user != null) {
       await cartController.fetchCart(user.uid);
+            setState(() {});
     } else {
       Navigator.pushReplacement(
         context,
