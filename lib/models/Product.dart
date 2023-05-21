@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-class Product{
+
+class Product {
   String id;
   String name;
   String description;
@@ -24,7 +25,7 @@ class Product{
     required this.quantity,
     required this.createdDate,
   });
-  factory Product.fromFirestore(DocumentSnapshot doc){
+  factory Product.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Product(
       id: doc.id,
@@ -42,11 +43,18 @@ class Product{
   }
   static Future<List<Product>> getProducts() async {
     QuerySnapshot querySnapshot =
-    await FirebaseFirestore.instance.collection('Products').get();
-    List<Product> products = querySnapshot.docs
-        .map((doc) => Product.fromFirestore(doc))
-        .toList();
+        await FirebaseFirestore.instance.collection('Products').get();
+    List<Product> products =
+        querySnapshot.docs.map((doc) => Product.fromFirestore(doc)).toList();
     return products;
   }
 
+  Future<Product> getProductById() async {
+    final doc =
+        await FirebaseFirestore.instance.collection('Product').doc(id).get();
+    if (!doc.exists) {
+      throw Exception('Product does not exist');
+    }
+    return Product.fromFirestore(doc);
+  }
 }
