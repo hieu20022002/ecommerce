@@ -73,61 +73,35 @@ class ProductController extends ChangeNotifier {
     return sortedProducts;
   }
 
-  // Future<List<Product>> getProductsByCategory(String categoryName) async {
-  //   List<Product> products = [];
-  //   QuerySnapshot snapshot = await FirebaseFirestore.instance
-  //       .collection("Products")
-  //       .where("Category", isEqualTo: categoryName)
-  //       .get();
-
-  //   snapshot.docs.forEach((doc) {
-  //     Product product = Product.fromFirestore(doc);
-  //     products.add(product);
-  //   });
-  //   return products;
-  // }
-
-  //Get product if productname contain categoryname
-//   Future<List<Product>> getProductsByCategory(String categoryName) async {
-//   List<Product> products = [];
-//   QuerySnapshot snapshot = await FirebaseFirestore.instance
-//       .collection("Products")
-//       .where("Category", isEqualTo: categoryName)
-//       .get();
-
-//   snapshot.docs.forEach((doc) {
-//     Product product = Product.fromFirestore(doc);
-//     if (product.name.contains(categoryName)) {
-//       products.add(product);
-//     }
-//   });
-
-//   return products;
-// }
-  Future<List<Product>> getProductsByCategory(String categoryName) async {
+  Future<List<Product>> getProductsByCategory(String categoryId) async {
     List<Product> products = [];
-
-    // Get the categoryId based on the categoryName from the Categories collection
-    QuerySnapshot<Map<String, dynamic>> categorySnapshot =
-        await FirebaseFirestore.instance
-            .collection("Category")
-            .where("name", isEqualTo: categoryName)
-            .limit(1)
-            .get();
-
-    if (categorySnapshot.docs.isNotEmpty) {
-      String categoryId = categorySnapshot.docs.first.id;
-
-      // Query the Products collection using the categoryId field
+    try {
       QuerySnapshot productSnapshot = await FirebaseFirestore.instance
           .collection("Products")
           .where("category_id", isEqualTo: categoryId)
           .get();
+      products = productSnapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList();
+    } catch (error) {
+      print('Error fetching products by category: $error');
+    }
+    return products;
+  }
 
-      for (var doc in productSnapshot.docs) {
-        Product product = Product.fromFirestore(doc);
-        products.add(product);
-      }
+  Future<List<Product>> getProductsByBrand(String classificationValue) async {
+    List<Product> products = [];
+
+    try {
+      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection("Products")
+          .where("brand_id", isEqualTo: classificationValue)
+          .get();
+      products = productSnapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList();
+    } catch (error) {
+      print('Error fetching products by brand: $error');
     }
     return products;
   }

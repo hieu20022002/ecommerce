@@ -9,68 +9,41 @@ import '../../../models/Product.dart';
 import '../../details/details_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
-  final String categoryName;
+  final String classificationType;
+  final String classificationValue;
 
-  const ProductsScreen({Key? key, required this.categoryName})
-      : super(key: key);
+  const ProductsScreen({
+    Key? key,
+    required this.classificationType,
+    required this.classificationValue,
+  }) : super(key: key);
+
   @override
-  // ignore: library_private_types_in_public_api
   _ProductsScreenState createState() => _ProductsScreenState();
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
-  Future<List<Product>>? productsByCategory;
+  late Future<List<Product>> products;
   final productController = ProductController();
 
   @override
   void initState() {
     super.initState();
-    fetchProductsByCategory();
+    products = fetchProducts();
   }
 
-  Future<void> fetchProductsByCategory() async {
+  Future<List<Product>> fetchProducts() async {
     await productController.fetchProducts();
-    productsByCategory =
-        productController.getProductsByCategory(widget.categoryName);
-    setState(() {}); // Rebuild the widget tree to display the fetched products
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(kToolbarHeight + getProportionateScreenHeight(20)),
-        child: Column(
-          children: [
-            SizedBox(height: getProportionateScreenHeight(40)),
-            CustomAppBar(Title: widget.categoryName),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
-        child: FutureBuilder<List<Product>>(
-          future: productsByCategory,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
-                  child: Text('Error fetching products: ${snapshot.error}'));
-            } else {
-              final products = snapshot.data;
-              if (products != null && products.isNotEmpty) {
-                return _buildProductGrid(products);
-              } else {
-                return Center(child: Text('No products found.'));
-              }
-            }
-          },
-        ),
-      ),
-      bottomNavigationBar: CustomNavBar(selectedMenu: MenuState.home),
-    );
+    switch (widget.classificationType) {
+      case 'category':
+        return productController
+            .getProductsByCategory(widget.classificationValue);
+      case 'brand':
+        return productController.getProductsByBrand(widget.classificationValue);
+      default:
+        return [];
+    }
   }
 
   Widget _buildProductGrid(List<Product> products) {
@@ -112,10 +85,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        NumberFormat('#,###', 'vi_VN').format(product.price) +
-                            ' ₫',
+                        '\$${NumberFormat('#,###').format(product.price)}',
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           fontSize: 14,
                         ),
                       ),
@@ -127,6 +99,44 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
         );
       }).toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize:
+            Size.fromHeight(kToolbarHeight + getProportionateScreenHeight(20)),
+        child: Column(
+          children: [
+            SizedBox(height: getProportionateScreenHeight(40)),
+            CustomAppBar(Title: widget.classificationValue),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
+        child: FutureBuilder<List<Product>>(
+          future: products,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                  child: Text('Error fetching products: ${snapshot.error}'));
+            } else {
+              final products = snapshot.data;
+              if (products != null && products.isNotEmpty) {
+                return _buildProductGrid(products);
+              } else {
+                return Center(child: Text('No products found.'));
+              }
+            }
+          },
+        ),
+      ),
+      bottomNavigationBar: CustomNavBar(selectedMenu: MenuState.home),
     );
   }
 }

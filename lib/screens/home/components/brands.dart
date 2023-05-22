@@ -1,5 +1,6 @@
 import 'package:ecommerce/controller/BrandController.dart';
 import 'package:ecommerce/models/Brand.dart';
+import 'package:ecommerce/screens/home/components/product_screen.dart';
 import 'package:flutter/material.dart';
 import '../../../size_config.dart';
 import 'section_title.dart';
@@ -53,9 +54,19 @@ class _BrandsState extends State<Brands> {
                     ),
                     child: BrandCard(
                       brand: brand,
-                      press: () {},
-                      numberProductofBrand: brandController
-                          .getProductCountByBrand(brand.id),
+                      press: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductsScreen(
+                              classificationType: 'brand',
+                              classificationValue: brand.id,
+                            ),
+                          ),
+                        );
+                      },
+                      numberProductofBrand:
+                          brandController.getProductCountByBrand(brand.id),
                     ),
                   ),
                 )

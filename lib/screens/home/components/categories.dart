@@ -1,6 +1,6 @@
 import 'package:ecommerce/controller/CategoryController.dart';
 import 'package:ecommerce/models/Category.dart';
-import 'package:ecommerce/screens/home/components/category_product.dart';
+import 'package:ecommerce/screens/home/components/product_screen.dart';
 import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -38,16 +38,7 @@ class _CategoriesState extends State<Categories> {
         itemBuilder: (context, index) => CategoryCard(
           icon: _categories[index].icon,
           text: _categories[index].name,
-          press: () {
-            String categoryName = _categories[index].name;
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    ProductsScreen(categoryName: categoryName),
-              ),
-            );
-          },
+          categoryId: _categories[index].id, // Pass the categoryId here
         ),
       ),
     );
@@ -60,17 +51,27 @@ class CategoryCard extends StatelessWidget {
     required this.text,
     //icon of categories
     required this.icon,
-    required this.press,
+    required this.categoryId,
   }) : super(key: key);
 
   final String text;
   final String icon;
-  final GestureTapCallback press;
+  final String categoryId;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: press,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductsScreen(
+              classificationType: 'category',
+              classificationValue: categoryId,
+            ),
+          ),
+        );
+      },
       child: Padding(
         padding: EdgeInsets.only(right: getProportionateScreenWidth(10)),
         child: SizedBox(
@@ -78,7 +79,7 @@ class CategoryCard extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: 5),
-              Text(text, textAlign: TextAlign.center)
+              Text(text, textAlign: TextAlign.center),
             ],
           ),
         ),
