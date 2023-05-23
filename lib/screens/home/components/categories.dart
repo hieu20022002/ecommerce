@@ -1,5 +1,6 @@
 import 'package:ecommerce/controller/CategoryController.dart';
 import 'package:ecommerce/models/Category.dart';
+import 'package:ecommerce/screens/home/components/product_screen.dart';
 import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,8 +23,7 @@ class _CategoriesState extends State<Categories> {
   Future<void> fetchCategories() async {
     await categoryController.fetchCategories();
     _categories = categoryController.categories;
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
@@ -36,8 +36,9 @@ class _CategoriesState extends State<Categories> {
         scrollDirection: Axis.horizontal,
         itemCount: _categories.length,
         itemBuilder: (context, index) => CategoryCard(
+          icon: _categories[index].icon,
           text: _categories[index].name,
-          press: () {},
+          categoryId: _categories[index].id, // Pass the categoryId here
         ),
       ),
     );
@@ -48,26 +49,37 @@ class CategoryCard extends StatelessWidget {
   const CategoryCard({
     Key? key,
     required this.text,
-    required this.press,
+    //icon of categories
+    required this.icon,
+    required this.categoryId,
   }) : super(key: key);
 
   final String text;
-  final GestureTapCallback press;
+  final String icon;
+  final String categoryId;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: press,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductsScreen(
+              classificationType: 'category',
+              classificationValue: categoryId,
+            ),
+          ),
+        );
+      },
       child: Padding(
         padding: EdgeInsets.only(right: getProportionateScreenWidth(10)),
         child: SizedBox(
           width: getProportionateScreenWidth(55),
           child: Column(
             children: [
-              
               SizedBox(height: 5),
-              Text(text, 
-              textAlign: TextAlign.center)
+              Text(text, textAlign: TextAlign.center),
             ],
           ),
         ),

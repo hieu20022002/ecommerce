@@ -49,12 +49,47 @@ class Product {
     return products;
   }
 
-  Future<Product> getProductById() async {
+  static Future<Product> getProductById(String id) async {
     final doc =
-        await FirebaseFirestore.instance.collection('Product').doc(id).get();
+        await FirebaseFirestore.instance.collection('Products').doc(id).get();
+
     if (!doc.exists) {
       throw Exception('Product does not exist');
     }
     return Product.fromFirestore(doc);
   }
+
+
+  static Future<List<Product>> getProductsByCategory(String categoryId) async {
+    try {
+      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection("Products")
+          .where("category_id", isEqualTo: categoryId)
+          .get();
+      List<Product> products = productSnapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList();
+      return products;
+    } catch (error) {
+      print('Error fetching products by category: $error');
+    }
+    return [];
+  }
+
+  static Future<List<Product>> getProductsByBrand(String brandId) async {
+    List<Product> products = [];
+    try {
+      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection("Products")
+          .where("brand_id", isEqualTo: brandId)
+          .get();
+      products = productSnapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList();
+    } catch (error) {
+      print('Error fetching products by brand: $error');
+    }
+    return products;
+  }
+
 }

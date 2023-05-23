@@ -71,4 +71,10 @@ class ProductController extends ChangeNotifier {
     return sortedProducts;
   }
 
+  Future<void> fetchProductsByCategory(String categoryId) async {
+    this.setProducts(await Product.getProductsByCategory(categoryId));
+  }
+  Future<void> fetchProductsByBrand(String classificationValue) async {
+    this.setProducts(await Product.getProductsByBrand(classificationValue));
+  }
 }
