@@ -36,6 +36,18 @@ class _SignFormState extends State<SignForm> {
       });
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    // Check if user is already signed in
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user != null) {
+        Navigator.pushNamed(context, LoginSuccessScreen.routeName,
+            arguments: user);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +98,15 @@ class _SignFormState extends State<SignForm> {
                   );
                   User user = userCredential.user!;
                   KeyboardUtil.hideKeyboard(context);
-                  Navigator.pushNamed(context, LoginSuccessScreen.routeName, arguments: user);
+
+                  // Set persistence if remember is true
+                  if (remember!) {
+                    await FirebaseAuth.instance
+                        .setPersistence(Persistence.LOCAL);
+                  }
+
+                  Navigator.pushNamed(context, LoginSuccessScreen.routeName,
+                      arguments: user);
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
                     addError(error: kInvalidEmailError);
@@ -125,9 +145,7 @@ class _SignFormState extends State<SignForm> {
         }
         return null;
       },
-      
       decoration: InputDecoration(
-        
         labelText: "Password",
         hintText: "Enter your password",
         // If  you are using latest version of flutter then lable text and hint text shown like this

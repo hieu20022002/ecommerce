@@ -36,8 +36,8 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       String password = prefs.getString('password')!;
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      final user = FirebaseAuth.instance.currentUser; 
-      final newUser = MyUser.User(      
+      final newUser = MyUser.User(  
+        id: FirebaseAuth.instance.currentUser?.uid,     
         firstName: firstName,
         lastName: lastName,
         phonenumber: phoneNumber,
@@ -45,7 +45,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         modified_at: DateTime.now(),
         created_at: DateTime.now(),
       );
-      await newUser.save();
+      await newUser.SignUp();
       final newAdress = Address(
           userId: newUser.id!,
           addressLine: address,
@@ -56,6 +56,8 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       final newCart =Cart(
         userId: newUser.id!,
         total: 0,
+        cartDetails: [],
+        id:'',
       );
       await newCart.save();
       Navigator.pushNamed(context, ProfileScreen.routeName);

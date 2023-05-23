@@ -58,6 +58,7 @@ class Product {
     return Product.fromFirestore(doc);
   }
 
+
   static Future<List<Product>> getProductsByCategory(String categoryId) async {
     try {
       QuerySnapshot productSnapshot = await FirebaseFirestore.instance
