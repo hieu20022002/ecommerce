@@ -1,13 +1,40 @@
+import 'package:ecommerce/controller/CartController.dart';
+import 'package:ecommerce/screens/screens.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ecommerce/components/default_button.dart';
+import 'package:intl/intl.dart';
 import '../../../size_config.dart';
 import '../../constants.dart';
 
-class CheckoutCard extends StatelessWidget {
-  const CheckoutCard({
-    Key? key,
-  }) : super(key: key);
+class CheckoutCard extends StatefulWidget {
+  @override
+  _CheckoutCardState createState() => _CheckoutCardState();
+}
+
+class _CheckoutCardState extends State<CheckoutCard> {
+  final CartController cartController = CartController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _getCart();
+  }
+
+  void _getCart() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      await cartController.fetchCart(user.uid);
+      setState(() {});
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SignInScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +94,9 @@ class CheckoutCard extends StatelessWidget {
                     text: "Total:\n",
                     children: [
                       TextSpan(
-                        text: "\$337.15",
+                        text: NumberFormat('#,###', 'vi_VN')
+                                .format(cartController.cart.total) +
+                            "\₫",
                         style: TextStyle(fontSize: 16, color: Colors.black),
                       ),
                     ],

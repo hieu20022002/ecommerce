@@ -18,15 +18,15 @@ class Cart {
 
   factory Cart.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    List<Map<String, dynamic>> cartDetailsList =
-        List<Map<String, dynamic>>.from(data['cartDetails'] ?? []);
+    List<dynamic> cartDetailsList = data['cartDetails'] ?? [];
 
     return Cart(
       id: doc.id,
       userId: data['user_id'],
       total: (data['total'] ?? 0.0).toDouble(),
-      cartDetails:
-          cartDetailsList.map((detail) => CartDetail.fromMap(detail)).toList(),
+      cartDetails: cartDetailsList
+          .map((detail) => CartDetail.fromMap(detail as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -45,7 +45,7 @@ class Cart {
       await FirebaseFirestore.instance
           .collection('Cart')
           .doc(this.id)
-          .update(data);
+          .set(data);
     } else {
       final docRef =
           await FirebaseFirestore.instance.collection('Cart').add(data);
@@ -60,7 +60,7 @@ class Cart {
         .get();
 
     Cart cart =
-        querySnapshot.docs.map((doc) => Cart.fromFirestore(doc)).toList()[0];
+        querySnapshot.docs.map((doc) => Cart.fromFirestore(doc)).first;
     return cart;
   }
 
@@ -75,22 +75,40 @@ class Cart {
     // If the product is found, remove it from the cart details list
     if (index != -1) {
       cart.cartDetails.removeAt(index);
-      cart.cartDetails[index].deleteProduct(userId, productId);
-      cart.total = calculateTotal(cart.cartDetails);
-      await cart.save();
+      await FirebaseFirestore.instance.collection('Cart').doc(cart.id).update({
+        'cartDetails':
+            cart.cartDetails.map((detail) => detail.toMap()).toList(),
+      });
     }
+    cart.total = await calculateTotal(cart.cartDetails);
+    await FirebaseFirestore.instance.collection('Cart').doc(cart.id).update({
+      'total': cart.total,
+    });
+    await cart.save();
   }
 
-  double calculateTotal(List<CartDetail> cartDetails) {
-    ProductController productController = ProductController();
-    productController.fetchProducts();
+  Future<double> calculateTotal(List<CartDetail> cartDetails) async {
     double total = 0.0;
-    cartDetails.forEach((detail) {
-      total += detail.quantity *
-          productController.products
-              .firstWhere((product) => product.id == detail.productId)
-              .price;
-    });
+
+    for (CartDetail detail in cartDetails) {
+      int productPrice = await getProductPriceById(detail.productId);
+
+      if (productPrice != 0) {
+        total += detail.quantity * productPrice;
+      }
+    }
+
     return total;
   }
+
+  Future<int> getProductPriceById(String productId) async {
+    ProductController productController = ProductController();
+    await productController.fetchProducts();
+    Product product = productController.products.firstWhere(
+      (product) => product.id == productId,
+    );
+
+    return product.price;
+  }
 }
+
