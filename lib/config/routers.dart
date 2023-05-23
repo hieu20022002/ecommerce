@@ -26,6 +26,7 @@ final Map<String, WidgetBuilder> routes = {
   ProfileScreen.routeName: (context) => ProfileScreen(),
   // CartScreen.routeName:(context) => CartScreen(),
   MyAccountScreen.routeName :(context) => MyAccountScreen(),
+  ProfileScreen.routeName: (context) => ProfileScreen(),
 
 };
 
