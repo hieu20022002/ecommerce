@@ -73,36 +73,10 @@ class ProductController extends ChangeNotifier {
     return sortedProducts;
   }
 
-  Future<List<Product>> getProductsByCategory(String categoryId) async {
-    List<Product> products = [];
-    try {
-      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
-          .collection("Products")
-          .where("category_id", isEqualTo: categoryId)
-          .get();
-      products = productSnapshot.docs
-          .map((doc) => Product.fromFirestore(doc))
-          .toList();
-    } catch (error) {
-      print('Error fetching products by category: $error');
-    }
-    return products;
+  Future<void> fetchProductsByCategory(String categoryId) async {
+    this.setProducts(await Product.getProductsByCategory(categoryId));
   }
-
-  Future<List<Product>> getProductsByBrand(String classificationValue) async {
-    List<Product> products = [];
-
-    try {
-      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
-          .collection("Products")
-          .where("brand_id", isEqualTo: classificationValue)
-          .get();
-      products = productSnapshot.docs
-          .map((doc) => Product.fromFirestore(doc))
-          .toList();
-    } catch (error) {
-      print('Error fetching products by brand: $error');
-    }
-    return products;
+  Future<void> fetchProductsByBrand(String classificationValue) async {
+    this.setProducts(await Product.getProductsByBrand(classificationValue));
   }
 }

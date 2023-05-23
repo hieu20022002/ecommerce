@@ -23,27 +23,41 @@ class ProductsScreen extends StatefulWidget {
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
-  late Future<List<Product>> products;
+  List<Product> products = [];
   final productController = ProductController();
+  bool isLoading = true; // Biến tạm để kiểm tra trạng thái tải dữ liệu
 
   @override
   void initState() {
     super.initState();
-    products = fetchProducts();
+    fetchProducts();
   }
 
-  Future<List<Product>> fetchProducts() async {
-    await productController.fetchProducts();
-
+  Future<void> fetchProducts() async {
     switch (widget.classificationType) {
       case 'category':
-        return productController
-            .getProductsByCategory(widget.classificationValue);
+        await productController
+            .fetchProductsByCategory(widget.classificationValue);
+        products = productController.getTopProductsByCreateDate();
+        setState(() {
+          isLoading = false; // Đánh dấu dữ liệu đã được tải xong
+        });
+        break;
       case 'brand':
-        return productController.getProductsByBrand(widget.classificationValue);
+        await productController
+            .fetchProductsByBrand(widget.classificationValue);
+        products = productController.getTopProductsByCreateDate();
+                setState(() {
+          isLoading = false; // Đánh dấu dữ liệu đã được tải xong
+        });
+        break;
       default:
-        return [];
+        products = [];
+        break;
     }
+    setState(() {
+      isLoading = false; // Đánh dấu dữ liệu đã được tải xong
+    });
   }
 
   Widget _buildProductGrid(List<Product> products) {
@@ -117,24 +131,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.only(top: SizeConfig.screenHeight * 0.02),
-        child: FutureBuilder<List<Product>>(
-          future: products,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
-                  child: Text('Error fetching products: ${snapshot.error}'));
-            } else {
-              final products = snapshot.data;
-              if (products != null && products.isNotEmpty) {
-                return _buildProductGrid(products);
-              } else {
-                return Center(child: Text('No products found.'));
-              }
-            }
-          },
-        ),
+        child: isLoading // Kiểm tra trạng thái tải dữ liệu
+            ? Center(child: CircularProgressIndicator())
+            : products.isNotEmpty
+                ? _buildProductGrid(products)
+                : Center(child: Text('No products found.')),
       ),
       bottomNavigationBar: CustomNavBar(selectedMenu: MenuState.home),
     );

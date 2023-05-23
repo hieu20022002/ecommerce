@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-class Product{
+
+class Product {
   String id;
   String name;
   String description;
@@ -24,7 +25,7 @@ class Product{
     required this.quantity,
     required this.createdDate,
   });
-  factory Product.fromFirestore(DocumentSnapshot doc){
+  factory Product.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Product(
       id: doc.id,
@@ -40,13 +41,52 @@ class Product{
       createdDate: data['createdDate'].toDate(),
     );
   }
-
   static Future<List<Product>> getProducts() async {
     QuerySnapshot querySnapshot =
-    await FirebaseFirestore.instance.collection('Products').get();
-    List<Product> products = querySnapshot.docs
-        .map((doc) => Product.fromFirestore(doc))
-        .toList();
+        await FirebaseFirestore.instance.collection('Products').get();
+    List<Product> products =
+        querySnapshot.docs.map((doc) => Product.fromFirestore(doc)).toList();
+    return products;
+  }
+
+  static Future<Product> getProductById(String id) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('Products').doc(id).get();
+    if (!doc.exists) {
+      throw Exception('Product does not exist');
+    }
+    return Product.fromFirestore(doc);
+  }
+
+  static Future<List<Product>> getProductsByCategory(String categoryId) async {
+    try {
+      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection("Products")
+          .where("category_id", isEqualTo: categoryId)
+          .get();
+      List<Product> products = productSnapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList();
+      return products;
+    } catch (error) {
+      print('Error fetching products by category: $error');
+    }
+    return [];
+  }
+
+  static Future<List<Product>> getProductsByBrand(String brandId) async {
+    List<Product> products = [];
+    try {
+      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection("Products")
+          .where("brand_id", isEqualTo: brandId)
+          .get();
+      products = productSnapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList();
+    } catch (error) {
+      print('Error fetching products by brand: $error');
+    }
     return products;
   }
 }
