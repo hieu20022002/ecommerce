@@ -44,16 +44,19 @@
 </head>
 
 <body>
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
   <script>
-        var firebaseConfig = {
+    var firebaseConfig = {
       apiKey: "AIzaSyBKZUPuxa6178G4cMpvSsZCAkBilIKZrTU",
       authDomain: "ecommerce-a2130.firebaseapp.com",
-      databaseURL: "https://ecommerce-a2130-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "ecommerce-a2130",
       storageBucket: "ecommerce-a2130.appspot.com",
       messagingSenderId: "894118685230",
-      appId: "1:894118685230:web:e3229aa5a26383a1da8dbf",
-      measurementId: "G-5RXF1MR5KS"
+      appId: "1:894118685230:web:e3229aa5a26383a1da8dbf"
     };
 
     // Initialize Firebase

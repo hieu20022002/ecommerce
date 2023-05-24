@@ -5,9 +5,14 @@ import '../../../models/Product.dart';
 import '../../../size_config.dart';
 import '../../constants.dart';
 
+import 'package:flutter/foundation.dart';
+
 class QuantityCounter extends StatefulWidget {
+  final ValueNotifier<int> quantity;
+
   const QuantityCounter({
     Key? key,
+    required this.quantity,
   }) : super(key: key);
 
   @override
@@ -15,8 +20,6 @@ class QuantityCounter extends StatefulWidget {
 }
 
 class _QuantityCounterState extends State<QuantityCounter> {
-  int numOfItems = 1;
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -26,26 +29,27 @@ class _QuantityCounterState extends State<QuantityCounter> {
         children: [
           IconButton(
             onPressed: () {
-              setState(() {
-                if (numOfItems > 1) {
-                  numOfItems--;
-                }
-              });
+              if (widget.quantity.value > 1) {
+                widget.quantity.value--;
+              }
             },
             icon: Icon(Icons.remove),
           ),
           SizedBox(
             width: getProportionateScreenWidth(20),
-            child: Text(
-              numOfItems.toString(),
-              textAlign: TextAlign.center,
+            child: ValueListenableBuilder<int>(
+              valueListenable: widget.quantity,
+              builder: (context, value, _) {
+                return Text(
+                  value.toString(),
+                  textAlign: TextAlign.center,
+                );
+              },
             ),
           ),
           IconButton(
             onPressed: () {
-              setState(() {
-                numOfItems++;
-              });
+              widget.quantity.value++;
             },
             icon: Icon(Icons.add),
           ),
@@ -59,26 +63,30 @@ class ProductPrice extends StatelessWidget {
   const ProductPrice({
     Key? key,
     required this.product,
+    required this.quantity,
   }) : super(key: key);
 
   final Product product;
+  final ValueNotifier<int> quantity;
 
   @override
   Widget build(BuildContext context) {
+    int totalPrice = product.price * quantity.value;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            NumberFormat('#,###', 'vi_VN').format(product.price) + "\₫",
+            NumberFormat('#,###', 'vi_VN').format(totalPrice) + "\₫",
             style: TextStyle(
               fontSize: getProportionateScreenWidth(18),
               fontWeight: FontWeight.w600,
               color: kPrimaryColor,
             ),
           ),
-          QuantityCounter(),
+          QuantityCounter(quantity: quantity),
         ],
       ),
     );
