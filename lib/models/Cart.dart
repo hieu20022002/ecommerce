@@ -59,8 +59,7 @@ class Cart {
         .where('user_id', isEqualTo: userId)
         .get();
 
-    Cart cart =
-        querySnapshot.docs.map((doc) => Cart.fromFirestore(doc)).first;
+    Cart cart = querySnapshot.docs.map((doc) => Cart.fromFirestore(doc)).first;
     return cart;
   }
 
@@ -110,5 +109,26 @@ class Cart {
 
     return product.price;
   }
-}
 
+  Future<void> AddProducttoCart(
+      String userId, String productId, int quantity) async {
+    Cart cart = await getCart(userId);
+    if (cart.cartDetails.any((element) => element.productId == productId)) {
+      int index = cart.cartDetails
+          .indexWhere((element) => element.productId == productId);
+      cart.cartDetails[index].quantity += quantity;
+    } else {
+      CartDetail cartDetail =
+          new CartDetail(productId: productId, quantity: quantity);
+      cart.cartDetails.add(cartDetail);
+    }
+    await FirebaseFirestore.instance.collection('Cart').doc(cart.id).update({
+      'cartDetails': cart.cartDetails.map((detail) => detail.toMap()).toList()
+    });
+    cart.total = await calculateTotal(cart.cartDetails);
+    await FirebaseFirestore.instance.collection('Cart').doc(cart.id).update({
+      'total': cart.total,
+    });
+    await cart.save();
+  }
+}

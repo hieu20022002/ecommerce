@@ -18,5 +18,8 @@ class CartController extends ChangeNotifier {
   Future<void> deleteProductByIdandUserID(String productId,String userId) async {
     await _cart.deleteProduct(userId, productId);
   }
+  Future<void> addProductToCart(String userId, String productId,int quantity) async {
+    await _cart.AddProducttoCart(userId, productId, quantity);
+  }
 
 }
