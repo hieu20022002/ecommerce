@@ -1,4 +1,5 @@
 import 'package:ecommerce/models/User.dart';
+import 'package:ecommerce/screens/Product_Management/addproductscreen.dart';
 import 'package:ecommerce/screens/cart/cart_screen.dart';
 import 'package:ecommerce/screens/details/details_screen.dart';
 import 'package:ecommerce/screens/home/home_screen.dart';
@@ -27,7 +28,7 @@ final Map<String, WidgetBuilder> routes = {
   CartScreen.routeName:(context) => CartScreen(),
   MyAccountScreen.routeName :(context) => MyAccountScreen(),
   ProfileScreen.routeName: (context) => ProfileScreen(),
-
+  AddProductScreen.routeName: (context) => AddProductScreen(),
 };
 
 

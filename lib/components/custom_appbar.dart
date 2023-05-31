@@ -16,6 +16,8 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
 
   @override
     Widget build(BuildContext context) {
+    int cartItemCount = 0;
+    
     return Padding(
       padding:
           EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
