@@ -1,3 +1,4 @@
+import 'package:ecommerce/screens/Product_Management/addproductscreen.dart';
 import 'package:ecommerce/screens/constants.dart';
 import 'package:ecommerce/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class CustomNavBar extends StatelessWidget {
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Heart Icon.svg"),
-                onPressed: () {}
+                onPressed: () => Navigator.pushNamed(context, AddProductScreen.routeName),
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg"),
