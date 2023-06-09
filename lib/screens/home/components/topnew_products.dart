@@ -1,16 +1,16 @@
 import 'package:ecommerce/components/product_card.dart';
 import 'package:ecommerce/controller/ProductController.dart';
 import 'package:ecommerce/models/Product.dart';
+import 'package:ecommerce/screens/home/components/section_title.dart';
+import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
-import '../../../size_config.dart';
-import 'section_title.dart';
 
-class PopularProducts extends StatefulWidget {
+class TopNewProducts extends StatefulWidget {
   @override
-  _PopularProductsState createState() => _PopularProductsState();
+  _TopNewProductsState createState() => _TopNewProductsState();
 }
 
-class _PopularProductsState extends State<PopularProducts> {
+class _TopNewProductsState extends State<TopNewProducts> {
   final productController = ProductController();
   List<Product> topProducts = [];
 
@@ -34,7 +34,7 @@ class _PopularProductsState extends State<PopularProducts> {
         Padding(
           padding:
               EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-          child: SectionTitle(title: "Popular Products", press: () {}),
+          child: SectionTitle(title: "New Products", press: () {}),
         ),
         SizedBox(height: getProportionateScreenWidth(20)),
         SingleChildScrollView(
@@ -44,13 +44,14 @@ class _PopularProductsState extends State<PopularProducts> {
               ...List.generate(
                 topProducts.length,
                 (index) {
-                  if (topProducts[index].status==1)
+                  if (topProducts[index].status == 1) {
                     return ProductCard(product: topProducts[index]);
-                  else
-                    return SizedBox.shrink(); // here by default width and height is 0
+                  } else {
+                    return SizedBox
+                        .shrink(); // here by default width and height is 0
+                  }
                 },
               ),
-              SizedBox(width: getProportionateScreenWidth(20)),
             ],
           ),
         )

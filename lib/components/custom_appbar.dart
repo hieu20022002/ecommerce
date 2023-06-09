@@ -16,6 +16,8 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
 
   @override
     Widget build(BuildContext context) {
+    int cartItemCount = 0;
+    
     return Padding(
       padding:
           EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
@@ -25,7 +27,9 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
           SearchField(),
           IconBtnWithCounter(
             svgSrc: "assets/icons/Cart Icon.svg",
-            press: () => Navigator.pushNamed(context, CartScreen.routeName),
+            press: () {
+              Navigator.pushNamed(context, CartScreen.routeName);
+            },
           ),
           IconBtnWithCounter(
             svgSrc: "assets/icons/Bell.svg",

@@ -1,21 +1,33 @@
+import 'package:ecommerce/models/Product.dart';
+import 'package:ecommerce/screens/constants.dart';
+import 'package:ecommerce/screens/details/details_screen.dart';
+import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import '../models/Product.dart';
-import '../screens/constants.dart';
-import '../screens/details/details_screen.dart';
-import '../size_config.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   const ProductCard({
     Key? key,
     this.width = 140,
-    this.aspectRetio = 1.02,
+    this.aspectRatio = 1.02,
     required this.product,
   }) : super(key: key);
 
-  final double width, aspectRetio;
+  final double width, aspectRatio;
   final Product product;
+
+  @override
+  _ProductCardState createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  late bool _showImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _showImage = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,33 +35,41 @@ class ProductCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(left: getProportionateScreenWidth(20)),
       child: SizedBox(
-        width: getProportionateScreenWidth(width),
+        width: getProportionateScreenWidth(widget.width),
         child: GestureDetector(
           onTap: () => Navigator.pushNamed(
             context,
             DetailsScreen.routeName,
-            arguments: ProductDetailsArguments(product: product),
+            arguments: ProductDetailsArguments(product: widget.product),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AspectRatio(
-                aspectRatio: 1.02,
+                aspectRatio: widget.aspectRatio,
                 child: Container(
                   padding: EdgeInsets.all(getProportionateScreenWidth(20)),
                   decoration: BoxDecoration(
                     color: kSecondaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Hero(
-                    tag: product.id.toString(),
-                    child: Image.asset(product.images[0]),
+                  child: AnimatedSwitcher(
+                    duration: Duration(milliseconds: 500),
+                    child: _showImage
+                        ? Image.network(
+                            widget.product.imageUrl,
+                            fit: BoxFit.contain,
+                            key: ValueKey(widget.product.id),
+                          )
+                        : Container(
+                            key: ValueKey(widget.product.id),
+                          ),
                   ),
                 ),
               ),
               const SizedBox(height: 10),
               Text(
-                product.title,
+                widget.product.name,
                 style: TextStyle(color: Colors.black),
                 maxLines: 2,
               ),
@@ -57,32 +77,13 @@ class ProductCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    NumberFormat('#,###', 'vi_VN').format(product.price)+"\₫",
+                    NumberFormat('#,###', 'vi_VN')
+                            .format(widget.product.price) +
+                        "\₫",
                     style: TextStyle(
                       fontSize: getProportionateScreenWidth(18),
                       fontWeight: FontWeight.w600,
                       color: kPrimaryColor,
-                    ),
-                  ),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(50),
-                    onTap: () {},
-                    child: Container(
-                      padding: EdgeInsets.all(getProportionateScreenWidth(8)),
-                      height: getProportionateScreenWidth(28),
-                      width: getProportionateScreenWidth(28),
-                      decoration: BoxDecoration(
-                        color: product.isFavourite
-                            ? kPrimaryColor.withOpacity(0.15)
-                            : kSecondaryColor.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: SvgPicture.asset(
-                        "assets/icons/Heart Icon_2.svg",
-                        color: product.isFavourite
-                            ? Color(0xFFFF4848)
-                            : Color(0xFFDBDEE4),
-                      ),
                     ),
                   ),
                 ],

@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/models/Adress.dart';
+import 'package:ecommerce/models/Cart.dart';
 import 'package:ecommerce/screens/profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +36,8 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       String password = prefs.getString('password')!;
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      final user = FirebaseAuth.instance.currentUser; 
-      final newUser = MyUser.User(     
-        id:  user?.uid,  
+      final newUser = MyUser.User(  
+        id: FirebaseAuth.instance.currentUser?.uid,     
         firstName: firstName,
         lastName: lastName,
         phonenumber: phoneNumber,
@@ -47,13 +47,19 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
       );
       await newUser.SignUp();
       final newAdress = Address(
-          userId: newUser.id,
+          userId: newUser.id!,
           addressLine: address,
           receiver: "${newUser.firstName} ${newUser.lastName}",
           phoneNumber: newUser.phonenumber);
 
       await newAdress.save();
-      // Chuyển hướng đến màn hình OTP để xác nhận số điện thoại
+      final newCart =Cart(
+        userId: newUser.id!,
+        total: 0,
+        cartDetails: [],
+        id:'',
+      );
+      await newCart.save();
       Navigator.pushNamed(context, ProfileScreen.routeName);
     } catch (e) {
       print('Error: $e');
