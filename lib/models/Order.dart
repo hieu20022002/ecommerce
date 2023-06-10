@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce/models/Address.dart';
 import 'package:ecommerce/models/OrderDetail.dart';
 
 class Order {
   String id;
-  int userId;
-  int paymentId;
-  int addressId;
+  String userId;
+  String paymentId;
+  String addressId;
   double total;
   DateTime createdAt;
   DateTime modifiedAt;
@@ -54,7 +55,10 @@ class Order {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('Orders').get();
     List<Order> orders = querySnapshot.docs.map((doc) => Order.fromFirestore(doc)).toList();
     return orders;
-
+  }
+  static Future<Address> getByAddressId(String id) async {
+    Address address = await Address.getById(id);
+    return address;
   }
 
 }

@@ -18,4 +18,6 @@ class OrderController extends ChangeNotifier{
       print('Error fetching orders: $error');
     }
   }
+
+  void updateOrder(Order order, String s, bool bool) {}
 }

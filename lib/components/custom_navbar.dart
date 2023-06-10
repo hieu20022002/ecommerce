@@ -1,3 +1,4 @@
+import 'package:ecommerce/screens/Order_Management/OrderScreensMana.dart';
 import 'package:ecommerce/screens/Product_Management/addproductscreen.dart';
 import 'package:ecommerce/screens/constants.dart';
 import 'package:ecommerce/screens/profile/profile_screen.dart';
@@ -54,7 +55,7 @@ class CustomNavBar extends StatelessWidget {
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg"),
-                onPressed: () {},
+                onPressed: () => Navigator.pushNamed(context, OrderScreensMana.routeName),
               ),
               IconButton(
                 icon: SvgPicture.asset(
