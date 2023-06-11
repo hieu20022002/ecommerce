@@ -51,11 +51,11 @@ class CustomNavBar extends StatelessWidget {
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Heart Icon.svg"),
-                onPressed: () => Navigator.pushNamed(context, AddProductScreen.routeName),
+                onPressed: () {},
               ),
               IconButton(
-                icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg"),
-                onPressed: () => Navigator.pushNamed(context, OrderScreensMana.routeName),
+                icon: SvgPicture.asset("assets/icons/6984282591642578242.svg"),
+                onPressed: () {},
               ),
               IconButton(
                 icon: SvgPicture.asset(

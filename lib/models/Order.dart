@@ -60,5 +60,16 @@ class Order {
     Address address = await Address.getById(id);
     return address;
   }
+  static Future<void> updateStatusById(String orderId, int newStatus) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Orders')
+          .doc(orderId)
+          .update({'status': newStatus});
+    } catch (error) {
+      print('Lỗi khi cập nhật trạng thái đơn hàng: $error');
+      // Xử lý lỗi theo yêu cầu của bạn
+    }
+  }
 
 }
