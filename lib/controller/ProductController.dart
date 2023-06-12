@@ -111,4 +111,18 @@ class ProductController extends ChangeNotifier {
       print('Error adding new product: $error');
     }
   }
+  Future<void> searchProducts(String keyword) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .where('name', isGreaterThanOrEqualTo: keyword)
+          .get();
+      List<Product> products = querySnapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList();
+      this.setProducts(products);
+    } catch (error) {
+      print('Error searching products: $error');
+    }
+  }
 }

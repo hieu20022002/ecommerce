@@ -51,6 +51,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
           isLoading = false; // Đánh dấu dữ liệu đã được tải xong
         });
         break;
+      case 'search':
+        await productController.searchProducts(widget.classificationValue);
+        products = productController.getTopProductsByCreateDate();
+                setState(() {
+          isLoading = false; // Đánh dấu dữ liệu đã được tải xong
+        });
+        break;
       default:
         products = [];
         break;
@@ -99,7 +106,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '\$${NumberFormat('#,###').format(product.price)}',
+                        NumberFormat('#,###','vi_VN').format(product.price)+"\₫",
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,

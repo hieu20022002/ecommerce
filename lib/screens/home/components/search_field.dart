@@ -1,8 +1,12 @@
+import 'package:ecommerce/controller/ProductController.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../size_config.dart';
 import '../../constants.dart';
+import 'product_screen.dart';
 
 class SearchField extends StatelessWidget {
+
   const SearchField({
     Key? key,
   }) : super(key: key);
@@ -17,7 +21,20 @@ class SearchField extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        onChanged: (value) => print(value),
+        onSubmitted: (value) {
+          if (value.isNotEmpty) {
+            // Chuyển sang SearchResultScreen và truyền danh sách sản phẩm
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductsScreen(
+                  classificationType: 'search',
+                  classificationValue: value,
+                ),
+              ),
+            ); // Gọi hàm searchProducts với từ khóa tìm kiếm
+          }
+        },
         decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(20),

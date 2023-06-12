@@ -29,8 +29,7 @@ class _OrderScreensManaState extends State<OrderScreensMana> {
     try {
       await orderController.updateOrderStatus(orderId, newStatus);
       if (!isFetching) {
-        orderController.fetchOrder();
-        setState(() {}); // Tải lại danh sách đơn hàng mới
+        orderController.fetchOrder();// Tải lại danh sách đơn hàng mới
       }
     } catch (error) {
       print('Error updating order status: $error');
@@ -42,7 +41,9 @@ class _OrderScreensManaState extends State<OrderScreensMana> {
       isFetching = true; // Đặt biến cờ thành true trước khi bắt đầu tải dữ liệu
       List<Order> orders = await Order.getOrders();
       orderController.order(orders);
-      setState(() {});
+      setState(() {
+        
+      });
     } catch (error) {
       print('Error fetching orders: $error');
     } finally {
