@@ -1,3 +1,4 @@
+import 'package:ecommerce/controller/ProductController.dart';
 import 'package:ecommerce/screens/constants.dart';
 import 'package:ecommerce/size_config.dart';
 import 'package:flutter/material.dart';
@@ -10,19 +11,24 @@ import '../screens/home/components/search_field.dart';
 class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   final String Title;
   const CustomAppBar({
-    super.key,
+    Key? key,
     required this.Title,
-  });
+  }) : super(key: key);
 
   @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
+    int cartItemCount = 0;
+
+
+
     return Padding(
       padding:
           EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SearchField(),
+          SearchField( // Truyền productController vào SearchField
+),
           IconBtnWithCounter(
             svgSrc: "assets/icons/Cart Icon.svg",
             press: () {

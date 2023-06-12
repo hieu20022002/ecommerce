@@ -1,6 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ecommerce/models/Adress.dart';
+import 'package:ecommerce/models/Address.dart';
 import 'package:ecommerce/models/Cart.dart';
 import 'package:ecommerce/screens/profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';

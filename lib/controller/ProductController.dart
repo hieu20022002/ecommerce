@@ -77,4 +77,52 @@ class ProductController extends ChangeNotifier {
   Future<void> fetchProductsByBrand(String classificationValue) async {
     this.setProducts(await Product.getProductsByBrand(classificationValue));
   }
+    Future<void> addNewProduct({
+    required String name,
+    required String description,
+    required String imageUrl,
+    required String brandId,
+    required String categoryId,
+    required String couponId,
+    required int status,
+    required int price,
+    required int quantity,
+  }) async {
+    try {
+      // Create a new Product instance
+      Product newProduct = Product(
+        id: '', // Firestore will generate the ID
+        name: name,
+        description: description,
+        imageUrl: imageUrl,
+        brandId: brandId,
+        categoryId: categoryId,
+        couponId: couponId,
+        status: status,
+        price: price,
+        quantity: quantity,
+        createdDate: DateTime.now(),
+      );
+
+      // Add the new product to Firestore and update the local list
+      await addProduct(newProduct);
+    } catch (error) {
+      // Handle the error appropriately for your app
+      print('Error adding new product: $error');
+    }
+  }
+  Future<void> searchProducts(String keyword) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Products')
+          .where('name', isGreaterThanOrEqualTo: keyword)
+          .get();
+      List<Product> products = querySnapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList();
+      this.setProducts(products);
+    } catch (error) {
+      print('Error searching products: $error');
+    }
+  }
 }

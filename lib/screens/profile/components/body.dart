@@ -1,3 +1,5 @@
+import 'package:ecommerce/screens/Order_Management/OrderScreensMana.dart';
+import 'package:ecommerce/screens/Product_Management/addproductscreen.dart';
 import 'package:ecommerce/screens/my_account/my_account.dart';
 import 'package:ecommerce/screens/sign_in/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,12 +33,12 @@ class Body extends StatelessWidget {
           ProfileMenu(
             text: "Settings",
             icon: "assets/icons/Settings.svg",
-            press: () {},
+            press: () => {Navigator.pushNamed(context, AddProductScreen.routeName)},
           ),
           ProfileMenu(
             text: "Help Center",
             icon: "assets/icons/Question mark.svg",
-            press: () {},
+            press: () => {Navigator.pushNamed(context, OrderScreensMana.routeName)},
           ),
           ProfileMenu(
             text: "Log Out",

@@ -11,7 +11,7 @@ class Address {
 
   factory Address.fromDocument(DocumentSnapshot doc) {
     return Address(
-      id: doc['id'],
+      id: doc.id,
       userId: doc['user_id'],
       receiver: doc['receiver'],
       phoneNumber: doc['phonenumber'],
@@ -19,13 +19,11 @@ class Address {
     );
   }
 
-  static Future<Address?> getById(String id) async {
+  static Future<Address> getById(String id) async {
     final snapshot = await FirebaseFirestore.instance.collection('Address').doc(id).get();
     if (!snapshot.exists) {
-      return null;
+      throw Exception('Address does not exist');
     }
-
-    final data = snapshot.data();
     return Address.fromDocument(snapshot);
   }
 

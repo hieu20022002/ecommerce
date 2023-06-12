@@ -90,4 +90,25 @@ class Product {
     }
     return products;
   }
+    static Future<void> addProduct(Product product) async {
+    try {
+      // Thêm sản phẩm vào Firestore
+      await FirebaseFirestore.instance.collection('Products').add({
+        'name': product.name,
+        'description': product.description,
+        'imageUrl': product.imageUrl,
+        'brand_id': product.brandId,
+        'category_id': product.categoryId,
+        'coupon_id': product.couponId,
+        'status': product.status,
+        'price': product.price,
+        'quantity': product.quantity,
+        'createdDate': product.createdDate,
+      });
+    } catch (error) {
+      print('Error adding product: $error');
+      throw Exception('Failed to add product');
+    }
+  }
+
 }
