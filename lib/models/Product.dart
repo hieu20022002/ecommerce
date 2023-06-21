@@ -110,5 +110,4 @@ class Product {
       throw Exception('Failed to add product');
     }
   }
-
 }

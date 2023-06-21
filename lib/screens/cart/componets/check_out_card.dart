@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ecommerce/components/default_button.dart';
 import 'package:intl/intl.dart';
 import '../../../size_config.dart';
+import '../../check_out/CheckoutScreen.dart';
 import '../../constants.dart';
 
 class CheckoutCard extends StatefulWidget {
@@ -106,7 +107,14 @@ class _CheckoutCardState extends State<CheckoutCard> {
                   width: getProportionateScreenWidth(190),
                   child: DefaultButton(
                     text: "Check Out",
-                    press: () {},
+                    press: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CheckoutScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
