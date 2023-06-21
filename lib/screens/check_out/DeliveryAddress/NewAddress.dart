@@ -1,5 +1,5 @@
+import 'package:ecommerce/models/AdministrativeUnit.dart';
 import 'package:flutter/material.dart';
-
 import 'LocationSelection.dart';
 
 class NewAddress extends StatefulWidget {
@@ -11,12 +11,24 @@ class _NewAddressState extends State<NewAddress> {
   final _formKey = GlobalKey<FormState>();
   bool isDefault = false;
   String selectedLocation = '';
+  late Future<List<AdministrativeUnit>>
+      administrativeUnitsFuture; // Declare a future variable
+
+  @override
+  void initState() {
+    super.initState();
+    administrativeUnitsFuture =
+        loadAdministrativeUnits(); // Assign the future to the variable
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('New Address'),
+        title: Text(
+          'New Address',
+          style: TextStyle(color: Colors.deepOrange),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -25,7 +37,6 @@ class _NewAddressState extends State<NewAddress> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Contact section
               Text(
                 'Contact',
                 style: TextStyle(
@@ -75,43 +86,57 @@ class _NewAddressState extends State<NewAddress> {
                 ),
               ),
               SizedBox(height: 8),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LocationSelection(
-                        onLocationSelected: (location) {
-                          setState(() {
-                            selectedLocation = location;
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            selectedLocation.isNotEmpty
-                                ? selectedLocation
-                                : 'City, District, Ward',
+
+              FutureBuilder<List<AdministrativeUnit>>(
+                future: administrativeUnitsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error loading data'));
+                  } else {
+                    final administrativeUnits = snapshot.data!;
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LocationSelection(
+                              onLocationSelected: (location) {
+                                setState(() {
+                                  selectedLocation = location;
+                                });
+                              },
+                              administrativeUnits: administrativeUnits,
+                            ),
                           ),
-                          Icon(Icons.arrow_forward_ios),
-                        ],
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  selectedLocation.isNotEmpty
+                                      ? selectedLocation
+                                      : 'City, District, Ward',
+                                ),
+                                Icon(Icons.arrow_forward_ios),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
+                    );
+                  }
+                },
               ),
               SizedBox(height: 8),
               TextFormField(

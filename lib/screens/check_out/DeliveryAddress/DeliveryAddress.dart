@@ -2,19 +2,37 @@ import 'package:flutter/material.dart';
 
 import 'NewAddress.dart';
 
-class DeliveryAddress extends StatelessWidget {
-  final String address;
+class DeliveryAddress extends StatefulWidget {
+  final String selectedAddress;
 
-  const DeliveryAddress({required this.address});
+  DeliveryAddress({required this.selectedAddress});
+
+  @override
+  State<DeliveryAddress> createState() => _DeliveryAddressState();
+}
+
+class _DeliveryAddressState extends State<DeliveryAddress> {
+  String selectedAddress = '';
+
+  @override
+  void initState() {
+    super.initState();
+    selectedAddress = widget.selectedAddress;
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final selected = await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => AddressSelection()),
         );
+        if (selected != null) {
+          setState(() {
+            selectedAddress = selected;
+          });
+        }
       },
       child: Container(
         padding: EdgeInsets.all(10),
@@ -36,7 +54,9 @@ class DeliveryAddress extends StatelessWidget {
             SizedBox(width: 10),
             Expanded(
               child: Text(
-                address,
+                selectedAddress.isNotEmpty
+                    ? selectedAddress
+                    : 'Your delivery address goes here',
                 style: TextStyle(
                   color: Colors.black,
                 ),
@@ -55,7 +75,6 @@ class AddressSelection extends StatefulWidget {
 }
 
 class _AddressSelectionState extends State<AddressSelection> {
-  // A list of sample addresses
   final List<String> addresses = [
     '123 Main Street',
     '456 Elm Avenue',
@@ -64,7 +83,6 @@ class _AddressSelectionState extends State<AddressSelection> {
     '1213 Oak Drive'
   ];
 
-  // A variable to store the selected address value for each group
   String? selectedAddress;
 
   @override
@@ -75,10 +93,15 @@ class _AddressSelectionState extends State<AddressSelection> {
           'Address Selection',
           style: TextStyle(color: Colors.deepOrange),
         ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context, selectedAddress);
+          },
+        ),
       ),
       body: Column(
         children: [
-          // A listview builder to create the radio buttons for each address
           Expanded(
             child: ListView.builder(
               itemCount: addresses.length,
@@ -96,7 +119,6 @@ class _AddressSelectionState extends State<AddressSelection> {
               },
             ),
           ),
-          // A list tile to create the "Add New Address" option
           ListTile(
             leading: Icon(Icons.add),
             title: Text('Add New Address'),

@@ -222,8 +222,21 @@ class Navbar extends StatelessWidget {
   }
 }
 
-class CheckoutScreen extends StatelessWidget {
+class CheckoutScreen extends StatefulWidget {
   static String routeName = "/checkout";
+
+  @override
+  _CheckoutScreenState createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  String selectedAddress = '';
+
+  void updateSelectedAddress(String address) {
+    setState(() {
+      selectedAddress = address;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -245,9 +258,7 @@ class CheckoutScreen extends StatelessWidget {
             height: 10,
             color: Color.fromARGB(255, 235, 233, 233),
           ),
-          DeliveryAddress(
-            address: "Your delivery address goes here",
-          ),
+          DeliveryAddress(selectedAddress: selectedAddress),
           Separator(),
           ShippingOption(
             option: "Fast",
