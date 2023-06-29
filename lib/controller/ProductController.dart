@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce/models/Product.dart';
 import 'package:flutter/material.dart';
-
+import "package:unorm_dart/unorm_dart.dart" as unorm;
 class ProductController extends ChangeNotifier {
   List<Product> _products = [];
   List<Product> get products => _products;
@@ -113,14 +113,13 @@ class ProductController extends ChangeNotifier {
   }
   Future<void> searchProducts(String keyword) async {
     try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('Products')
-          .where('name', isGreaterThanOrEqualTo: keyword)
-          .get();
-      List<Product> products = querySnapshot.docs
-          .map((doc) => Product.fromFirestore(doc))
-          .toList();
-      this.setProducts(products);
+    await fetchProducts();
+    String normalizedKeyword = unorm.nfkd(keyword).toLowerCase();
+    List<Product> searchResults = products.where((product) =>
+      unorm.nfkd(product.name).toLowerCase().contains(normalizedKeyword)).toList();
+    // Xóa các sản phẩm cũ
+    _products.clear();
+    this.setProducts(searchResults);
     } catch (error) {
       print('Error searching products: $error');
     }

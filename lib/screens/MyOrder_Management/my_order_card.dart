@@ -11,7 +11,6 @@ class MyOrderCard extends StatelessWidget {
     required this.order,
     required this.updateOrderStatusAndFetch
   }) : super(key: key);
-
   final Order order;
   final Function(String, int) updateOrderStatusAndFetch;
   @override

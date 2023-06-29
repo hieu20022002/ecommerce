@@ -102,11 +102,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               },
             ),
           ),
-          ShippingOption(
-            option: "Fast",
-            estimatedDeliveryTime: "June 15 - June 18",
-            shippingFee: widget.cartController.cart.total,
-          ),
+          // ShippingOption(
+          //   option: "Fast",
+          //   estimatedDeliveryTime: "June 15 - June 18",
+          //   shippingFee: widget.cartController.cart.total,
+          // ),
           PaymentMethodSelection(),
           Expanded(
             child: Container(),

@@ -8,7 +8,6 @@ class OrderManagementScreen extends StatefulWidget {
   final int initialIndex;
   const OrderManagementScreen({Key? key, this.initialIndex = 0})
       : super(key: key);
-
   @override
   _OrderManagementScreenState createState() => _OrderManagementScreenState();
 }
@@ -92,6 +91,7 @@ class _OrderManagementScreenState extends State<OrderManagementScreen>
   }
 
   Widget buildOrderList(List<Order> orders) {
+
     return ListView.builder(
       itemCount: orders.length,
       itemBuilder: (context, index) {
