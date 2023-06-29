@@ -98,7 +98,7 @@ class OrderCard extends StatelessWidget {
               child: OrderStatusWidget(orderStatus: order.status),
             ),
             FutureBuilder<Address>(
-              future: Order.getByAddressId(order.addressId),
+              future: Address.getById(order.addressId),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Address address = snapshot.data!;

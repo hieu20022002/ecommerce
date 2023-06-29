@@ -1,6 +1,6 @@
 import 'package:ecommerce/controller/OrderController.dart';
 import 'package:ecommerce/models/Order.dart';
-import 'package:ecommerce/screens/Order_Management/OrderScreensMana.dart';
+import 'package:ecommerce/screens/MyOrder_Management/my_order_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -96,7 +96,7 @@ class _OrderManagementScreenState extends State<OrderManagementScreen>
       itemCount: orders.length,
       itemBuilder: (context, index) {
         Order order = orders[index];
-        return OrderCard(
+        return MyOrderCard(
           order: order,
           updateOrderStatusAndFetch: (orderId, status) {
             // Implement the logic to update order status and fetch updated orders

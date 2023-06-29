@@ -1,23 +1,25 @@
+import 'package:ecommerce/controller/AddressController.dart';
+import 'package:ecommerce/models/Address.dart';
 import 'package:flutter/material.dart';
 
 import 'NewAddress.dart';
 
 class DeliveryAddress extends StatefulWidget {
-  final String selectedAddress;
-
-  DeliveryAddress({required this.selectedAddress});
+  final Address selectedAddress;
+  final String userId;
+  final Function(Address) onAddressSelected; 
+  DeliveryAddress({required this.selectedAddress, required this.userId,  required this.onAddressSelected});
 
   @override
   State<DeliveryAddress> createState() => _DeliveryAddressState();
 }
 
 class _DeliveryAddressState extends State<DeliveryAddress> {
-  String selectedAddress = '';
-
+  Address selectedAddress = Address();
+  late String addressId;
   @override
   void initState() {
     super.initState();
-    selectedAddress = widget.selectedAddress;
   }
 
   @override
@@ -26,12 +28,14 @@ class _DeliveryAddressState extends State<DeliveryAddress> {
       onTap: () async {
         final selected = await Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AddressSelection()),
+          MaterialPageRoute(builder: (context) => AddressSelection(userId: widget.userId)),
         );
         if (selected != null) {
           setState(() {
-            selectedAddress = selected;
+            addressId = selected;
           });
+          selectedAddress = await Address.getById(addressId);
+          widget.onAddressSelected(selectedAddress);
         }
       },
       child: Container(
@@ -53,13 +57,31 @@ class _DeliveryAddressState extends State<DeliveryAddress> {
             ),
             SizedBox(width: 10),
             Expanded(
-              child: Text(
-                selectedAddress.isNotEmpty
-                    ? selectedAddress
-                    : 'Your delivery address goes here',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    selectedAddress.receiver ?? 'Receiver Name',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    selectedAddress.phoneNumber ?? 'Phone Number',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    selectedAddress.addressLine ?? 'Address Line',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -70,20 +92,30 @@ class _DeliveryAddressState extends State<DeliveryAddress> {
 }
 
 class AddressSelection extends StatefulWidget {
+  final String userId;
+
+  const AddressSelection({Key? key, required this.userId}) : super(key: key);
+
   @override
   _AddressSelectionState createState() => _AddressSelectionState();
 }
 
 class _AddressSelectionState extends State<AddressSelection> {
-  final List<String> addresses = [
-    '123 Main Street',
-    '456 Elm Avenue',
-    '789 Pine Road',
-    '1011 Maple Lane',
-    '1213 Oak Drive'
-  ];
-
+  List<Address> addresses = [];
   String? selectedAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    _getAddress();
+  }
+
+  void _getAddress() async {
+    addresses = await AddressController.AddressByUserId(widget.userId);
+    setState(() {
+      selectedAddress = addresses.isNotEmpty ? addresses[0].id : null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,8 +139,17 @@ class _AddressSelectionState extends State<AddressSelection> {
               itemCount: addresses.length,
               itemBuilder: (context, index) {
                 return RadioListTile<String>(
-                  title: Text(addresses[index]),
-                  value: addresses[index],
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(addresses[index].receiver ?? 'Receiver Name'),
+                      SizedBox(height: 5),
+                      Text(addresses[index].phoneNumber ?? 'Phone Number'),
+                      SizedBox(height: 5),
+                      Text(addresses[index].addressLine ?? 'Address Line'),
+                    ],
+                  ),
+                  value: addresses[index].id ?? '',
                   groupValue: selectedAddress,
                   onChanged: (value) {
                     setState(() {
@@ -125,7 +166,7 @@ class _AddressSelectionState extends State<AddressSelection> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => NewAddress()),
+                MaterialPageRoute(builder: (context) => NewAddress(userId: widget.userId)),
               );
             },
           )

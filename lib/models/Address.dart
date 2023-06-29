@@ -27,16 +27,6 @@ class Address {
     return Address.fromDocument(snapshot);
   }
 
-  static Future<List> getByUserId(int userId) async {
-    final snapshot = await FirebaseFirestore.instance.collection('Address').where('user_id', isEqualTo: userId).get();
-    final addresses = [];
-
-    for (final doc in snapshot.docs) {
-      addresses.add(Address.fromDocument(doc));
-    }
-
-    return addresses;
-  }
 
   Future<void> save() async {
     final data = {
@@ -46,7 +36,7 @@ class Address {
       'address_line': this.addressLine,
     };
 
-    if (this.id != null) {
+    if (this.id != null || this.id != '') {
       await FirebaseFirestore.instance.collection('Address').doc(this.id).update(data);
     } else {
       final docRef = await FirebaseFirestore.instance.collection('Address').add(data);
@@ -56,5 +46,12 @@ class Address {
 
   Future<void> delete() async {
     await FirebaseFirestore.instance.collection('Address').doc(this.id).delete();
+  }
+  static Future<List<Address>> getAddressByUserId(String userId) async {
+    final snapshot = await FirebaseFirestore.instance.collection('Address').where('user_id', isEqualTo: userId).get();
+        final addresses = snapshot.docs
+        .map((doc) => Address.fromDocument(doc))
+        .toList();
+    return addresses;
   }
 }

@@ -52,7 +52,20 @@ class Order {
       'orderDetails': orderDetails.map((detail) => detail.toMap()).toList(),
     };
   }
+    Future<void> save() async {
+    final data = toMap();
 
+    if (this.id != '') {
+      await FirebaseFirestore.instance
+          .collection('Orders')
+          .doc(this.id)
+          .set(data);
+    } else {
+      final docRef =
+          await FirebaseFirestore.instance.collection('Orders').add(data);
+      this.id = docRef.id;
+    }
+  }
   static Future<List<Order>> getOrders() async {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('Orders').get();
@@ -61,10 +74,7 @@ class Order {
     return orders;
   }
 
-  static Future<Address> getByAddressId(String id) async {
-    Address address = await Address.getById(id);
-    return address;
-  }
+
 
   static Future<void> updateStatusById(String orderId, int newStatus) async {
     try {

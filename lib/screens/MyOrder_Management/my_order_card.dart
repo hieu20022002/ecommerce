@@ -27,7 +27,7 @@ class MyOrderCard extends StatelessWidget {
               child: OrderStatusWidget(orderStatus: order.status),
             ),
             FutureBuilder<Address>(
-              future: Order.getByAddressId(order.addressId),
+              future: Address.getById(order.addressId),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   Address address = snapshot.data!;
@@ -83,29 +83,6 @@ class MyOrderCard extends StatelessWidget {
             ),
             ButtonBar(
               children: [
-                if (order.status == 0)
-                  ElevatedButton(
-                    onPressed: () {
-                      updateOrderStatusAndFetch(order.id, 1);
-                    },
-                    child: Text('Xác nhận'),
-                  ),
-                if (order.status == 1)
-                  ElevatedButton(
-                    onPressed: () {
-                      // Xử lý khi nhấn nút Vận chuyển
-                      updateOrderStatusAndFetch(order.id, 2);
-                    },
-                    child: Text('Vận chuyển'),
-                  ),
-                if (order.status == 2)
-                  ElevatedButton(
-                    onPressed: () {
-                      // Xử lý khi nhấn nút Đã thanh toán
-                      updateOrderStatusAndFetch(order.id, 3);
-                    },
-                    child: Text('Đã thanh toán'),
-                  ),
                 if (order.status != 5 || order.status != 3)
                   ElevatedButton(
                     onPressed: () {

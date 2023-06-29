@@ -1,238 +1,72 @@
 import 'package:ecommerce/controller/CartController.dart';
+import 'package:ecommerce/models/Address.dart';
+import 'package:ecommerce/models/CartDetail.dart';
+import 'package:ecommerce/models/Order.dart';
+import 'package:ecommerce/screens/check_out/components/NotificatonMessage.dart';
 import 'package:flutter/material.dart';
-
+import '../../models/OrderDetail.dart';
 import 'DeliveryAddress/DeliveryAddress.dart';
-
-class NotificationMessage extends StatelessWidget {
-  final String message;
-
-  const NotificationMessage({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.lightBlue,
-      padding: EdgeInsets.all(10),
-      child: Row(
-        children: [
-          Icon(
-            Icons.notifications,
-            color: Colors.white,
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Separator extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 10,
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-      ),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 20,
-        itemBuilder: (context, index) {
-          return Row(
-            children: [
-              Transform(
-                transform: Matrix4.skewX(-0.2),
-                child: Container(
-                  width: 40,
-                  color: index % 2 == 0 ? Colors.blue : Colors.red,
-                ),
-              ),
-              SizedBox(width: 5),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class PaymentMethodSelection extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Select Payment Method",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              PaymentMethodTile(
-                icon: Icons.credit_card,
-                label: "Credit Card",
-              ),
-              SizedBox(width: 10),
-              PaymentMethodTile(
-                icon: Icons.payment,
-                label: "PayPal",
-              ),
-              SizedBox(width: 10),
-              PaymentMethodTile(
-                icon: Icons.monetization_on,
-                label: "Cash on Delivery",
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class PaymentMethodTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const PaymentMethodTile({
-    required this.icon,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon),
-        SizedBox(height: 5),
-        Text(label),
-      ],
-    );
-  }
-}
-
-class ShippingOption extends StatelessWidget {
-  final String option;
-  final String estimatedDeliveryTime;
-  final double shippingFee;
-
-  const ShippingOption({
-    required this.option,
-    required this.estimatedDeliveryTime,
-    required this.shippingFee,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Shipping Option",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 5),
-          Text(
-            option,
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-          SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Receive by $estimatedDeliveryTime",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              ),
-              Text(
-                "\$$shippingFee",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Navbar extends StatelessWidget {
-  final double totalPrice;
-  final VoidCallback onCheckoutPressed;
-
-  const Navbar({
-    required this.totalPrice,
-    required this.onCheckoutPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      color: Colors.grey[200],
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Total: \$${totalPrice.toStringAsFixed(2)}",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          ElevatedButton(
-            onPressed: onCheckoutPressed,
-            child: Text("Checkout"),
-          ),
-        ],
-      ),
-    );
-  }
-}
+import 'components/Navbar.dart';
+import 'components/PaymentSelection.dart';
+import 'components/Product_cart.dart';
+import 'components/Separator.dart';
+import 'components/ShippingOption.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  static String routeName = "/checkout";
-
+  final CartController cartController;
+  const CheckoutScreen({required this.cartController});
   @override
   _CheckoutScreenState createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  String selectedAddress = '';
+  Address selectedAddress = Address();
+  List<OrderDetail> mapCartDetailsToOrderDetails(List<CartDetail> cartDetails) {
+  List<OrderDetail> orderDetails = [];
 
-  void updateSelectedAddress(String address) {
+  for (CartDetail cartDetail in cartDetails) {
+    OrderDetail orderDetail = OrderDetail(
+      productId: cartDetail.productId,
+      quantity: cartDetail.quantity,
+    );
+
+    orderDetails.add(orderDetail);
+  }
+
+  return orderDetails;
+}
+  void handleCheckout() async {
+  // Thực hiện xử lý lưu thông tin đơn hàng và đơn hàng chi tiết vào cơ sở dữ liệu
+  // Lấy thông tin từ widget.cartController và selectedAddress
+
+  // Tạo một đối tượng Order mới
+  Order order = Order(
+    id: '',
+    userId: widget.cartController.cart.userId,
+    paymentId: '', // Mặc định là thanh toán khi nhận hàng
+    addressId: selectedAddress.id.toString(),
+    total: widget.cartController.cart.total,
+    createdAt: DateTime.now(),
+    modifiedAt: DateTime.now(),
+    status: 0, // Mặc định status là '0'
+    orderDetails:  mapCartDetailsToOrderDetails(widget.cartController.cart.cartDetails),
+  );
+
+  // Lưu đối tượng Order vào cơ sở dữ liệu
+  await order.save();
+  // Xóa các sản phẩm trong giỏ hàng
+  for (CartDetail cartDetail in widget.cartController.cart.cartDetails) {
+    await cartDetail.deleteProduct(widget.cartController.cart.id, cartDetail.productId);
+  }
+
+  // Hiển thị thông báo thành công hoặc thực hiện các xử lý khác sau khi lưu thành công
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Order placed successfully')),
+  );
+}
+
+
+  void updateSelectedAddress(Address  address) {
     setState(() {
       selectedAddress = address;
     });
@@ -258,20 +92,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             height: 10,
             color: Color.fromARGB(255, 235, 233, 233),
           ),
-          DeliveryAddress(selectedAddress: selectedAddress),
+          DeliveryAddress(selectedAddress: selectedAddress, userId: widget.cartController.cart.userId, onAddressSelected: updateSelectedAddress),
           Separator(),
+                    Expanded(
+            child: ListView.builder(
+              itemCount: widget.cartController.cart.cartDetails.length,
+              itemBuilder: (context, index) {
+                return ProductCard(cartdetail: widget.cartController.cart.cartDetails[index]);
+              },
+            ),
+          ),
           ShippingOption(
             option: "Fast",
             estimatedDeliveryTime: "June 15 - June 18",
-            shippingFee: 9.99,
+            shippingFee: widget.cartController.cart.total,
           ),
           PaymentMethodSelection(),
           Expanded(
             child: Container(),
           ),
           Navbar(
-            totalPrice: 99.99,
-            onCheckoutPressed: () {},
+            totalPrice: widget.cartController.cart.total,
+            onCheckoutPressed: handleCheckout,
           ),
         ],
       ),
