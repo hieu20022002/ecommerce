@@ -110,4 +110,27 @@ class Product {
       throw Exception('Failed to add product');
     }
   }
+    static Future<void> editProduct(Product product) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('Products')
+          .doc(product.id)
+          .update({
+        'name': product.name,
+        'description': product.description,
+        'imageUrl': product.imageUrl,
+        'brand_id': product.brandId,
+        'category_id': product.categoryId,
+        'coupon_id': product.couponId,
+        'status': product.status,
+        'price': product.price,
+        'quantity': product.quantity,
+        'createdDate': product.createdDate,
+      });
+    } catch (error) {
+      print('Error editing product: $error');
+      throw Exception('Failed to edit product');
+    }
+  }
+
 }
