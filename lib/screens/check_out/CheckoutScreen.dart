@@ -36,6 +36,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   return orderDetails;
 }
   void handleCheckout() async {
+      if (selectedAddress.id == null) {
+    // Hiển thị thông báo yêu cầu chọn địa chỉ
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Vui lòng chọn địa chỉ giao hàng')),
+    );
+    return;
+  }
   // Thực hiện xử lý lưu thông tin đơn hàng và đơn hàng chi tiết vào cơ sở dữ liệu
   // Lấy thông tin từ widget.cartController và selectedAddress
 
@@ -74,6 +81,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool hasSelectedAddress = selectedAddress.id != null;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white54,
@@ -107,7 +115,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           //   estimatedDeliveryTime: "June 15 - June 18",
           //   shippingFee: widget.cartController.cart.total,
           // ),
-          PaymentMethodSelection(),
+          PaymentMethodSelection(totalPrice: widget.cartController.cart.total, onCheckoutPressed: handleCheckout),
           Expanded(
             child: Container(),
           ),
