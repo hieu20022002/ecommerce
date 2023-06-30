@@ -103,7 +103,7 @@ class _RevenueTabState extends State<RevenueTab> {
         : '';
 
     final chart = charts.BarChart(
-      seriesList!,
+      seriesList??[],
       animate: true,
       vertical: true,
       barRendererDecorator: charts.BarLabelDecorator<String>(),
