@@ -3,6 +3,7 @@ import 'package:ecommerce/models/Address.dart';
 import 'package:ecommerce/models/CartDetail.dart';
 import 'package:ecommerce/models/Order.dart';
 import 'package:ecommerce/screens/check_out/components/NotificatonMessage.dart';
+import 'package:ecommerce/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import '../../models/OrderDetail.dart';
 import 'DeliveryAddress/DeliveryAddress.dart';
@@ -71,6 +72,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     SnackBar(content: Text('Order placed successfully')),
   );
 }
+  void handleCheckouPayPal() async {
+  // Tạo một đối tượng Order mới
+  Order order = Order(
+    id: '',
+    userId: widget.cartController.cart.userId,
+    paymentId: '', // Mặc định là thanh toán khi nhận hàng
+    addressId: selectedAddress.id.toString(),
+    total: widget.cartController.cart.total,
+    createdAt: DateTime.now(),
+    modifiedAt: DateTime.now(),
+    status: 0, // Mặc định status là '0'
+    orderDetails:  mapCartDetailsToOrderDetails(widget.cartController.cart.cartDetails),
+  );
+
+  // Lưu đối tượng Order vào cơ sở dữ liệu
+  await order.save();
+  // Xóa các sản phẩm trong giỏ hàng
+  for (CartDetail cartDetail in widget.cartController.cart.cartDetails) {
+    await cartDetail.deleteProduct(widget.cartController.cart.id, cartDetail.productId);
+  }
+  Navigator.pushNamed(context, HomeScreen.routeName);
+}
 
 
   void updateSelectedAddress(Address  address) {
@@ -115,7 +138,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           //   estimatedDeliveryTime: "June 15 - June 18",
           //   shippingFee: widget.cartController.cart.total,
           // ),
-          PaymentMethodSelection(totalPrice: widget.cartController.cart.total, onCheckoutPressed: handleCheckout),
+          PaymentMethodSelection(totalPrice: widget.cartController.cart.total, onCheckoutPressed: handleCheckouPayPal),
           Expanded(
             child: Container(),
           ),

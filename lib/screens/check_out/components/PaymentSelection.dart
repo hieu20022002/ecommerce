@@ -1,5 +1,6 @@
 import 'package:ecommerce/screens/MyOrder_Management/my_order_management.dart';
 import 'package:ecommerce/screens/check_out/components/PaymentMethodTile.dart';
+import 'package:ecommerce/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal_checkout/flutter_paypal_checkout.dart';
 
@@ -42,8 +43,9 @@ class PaymentMethodSelection extends StatelessWidget {
           onSuccess: (Map params) {
             // Handle the payment approval
             print("onSuccess: $params");
-            Navigator.pop(context);
             onCheckoutPressed();
+            
+            
           },
           onCancel: () {
             // Handle payment cancellation
