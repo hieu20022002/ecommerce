@@ -2,6 +2,7 @@ import 'package:ecommerce/components/custom_surfix_icon.dart';
 import 'package:ecommerce/components/default_button.dart';
 import 'package:ecommerce/components/form_error.dart';
 import 'package:ecommerce/helper/keyboard.dart';
+import 'package:ecommerce/screens/Statistic/statistic_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../size_config.dart';
@@ -104,9 +105,14 @@ class _SignFormState extends State<SignForm> {
                     await FirebaseAuth.instance
                         .setPersistence(Persistence.LOCAL);
                   }
-                  
-                  Navigator.pushNamed(context, LoginSuccessScreen.routeName,
+                  if(user.uid=='QZXa9rMAPXNJ2JCZRiIjPaj9htF3'){
+                    Navigator.pushNamed(context, StatisticScreen.routeName,
+                        arguments: user);
+                  }else{
+                                      Navigator.pushNamed(context, LoginSuccessScreen.routeName,
                       arguments: user);
+                  }
+
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
                     addError(error: kInvalidEmailError);
