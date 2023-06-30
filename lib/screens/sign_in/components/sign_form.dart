@@ -104,7 +104,7 @@ class _SignFormState extends State<SignForm> {
                     await FirebaseAuth.instance
                         .setPersistence(Persistence.LOCAL);
                   }
-
+                  
                   Navigator.pushNamed(context, LoginSuccessScreen.routeName,
                       arguments: user);
                 } on FirebaseAuthException catch (e) {
