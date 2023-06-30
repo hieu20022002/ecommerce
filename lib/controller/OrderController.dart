@@ -23,7 +23,7 @@ class OrderController extends ChangeNotifier {
   Future<void> updateOrderStatus(String orderId, int newStatus) async {
     try {
       await Order.updateStatusById(orderId, newStatus);
-            // Cập nhật trạng thái trong danh sách _orders
+      // Cập nhật trạng thái trong danh sách _orders
     } catch (error) {
       print('Error updating order status: $error');
       // Xử lý lỗi theo yêu cầu của bạn
