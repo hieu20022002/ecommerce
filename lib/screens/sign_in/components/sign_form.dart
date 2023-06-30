@@ -109,7 +109,7 @@ class _SignFormState extends State<SignForm> {
                     Navigator.pushNamed(context, StatisticScreen.routeName,
                         arguments: user);
                   }else{
-                                      Navigator.pushNamed(context, LoginSuccessScreen.routeName,
+                   Navigator.pushNamed(context, LoginSuccessScreen.routeName,
                       arguments: user);
                   }
 

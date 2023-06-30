@@ -1,3 +1,4 @@
+import 'package:ecommerce/screens/Product_Management/product_management.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:intl/intl.dart';
@@ -72,7 +73,7 @@ class _StatisticScreenState extends State<StatisticScreen> {
       case 2:
         return OrderScreensMana();
       case 3:
-      //return ManageProductsScreen();
+        return ProductsManagerScreen();
       default:
         return Container();
     }
