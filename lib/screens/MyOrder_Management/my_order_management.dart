@@ -52,6 +52,22 @@ class _OrderManagementScreenState extends State<OrderManagementScreen>
     }
   }
 
+  Future<void> updateOrderStatusAndFetch(String orderId, int newStatus) async {
+    try {
+      await orderController.updateOrderStatus(orderId, newStatus);
+      orderController.fetchOrder();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                OrderManagementScreen(initialIndex: newStatus)),
+      ); // Tải lại danh sách đơn hàng mới
+    } catch (error) {
+      print('Error updating order status: $error');
+      // Xử lý lỗi theo yêu cầu của bạn
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -91,7 +107,6 @@ class _OrderManagementScreenState extends State<OrderManagementScreen>
   }
 
   Widget buildOrderList(List<Order> orders) {
-
     return ListView.builder(
       itemCount: orders.length,
       itemBuilder: (context, index) {
@@ -100,6 +115,7 @@ class _OrderManagementScreenState extends State<OrderManagementScreen>
           order: order,
           updateOrderStatusAndFetch: (orderId, status) {
             // Implement the logic to update order status and fetch updated orders
+            updateOrderStatusAndFetch(orderId, status);
           },
         );
       },

@@ -7,7 +7,7 @@ class NotificationMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.lightBlue,
+      color: Color.fromARGB(255, 240, 132, 100),
       padding: EdgeInsets.all(10),
       child: Row(
         children: [

@@ -36,7 +36,7 @@ class Address {
       'address_line': this.addressLine,
     };
 
-    if (this.id != null || this.id != '') {
+    if (this.id != null) {
       await FirebaseFirestore.instance.collection('Address').doc(this.id).update(data);
     } else {
       final docRef = await FirebaseFirestore.instance.collection('Address').add(data);

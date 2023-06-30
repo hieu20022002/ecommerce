@@ -39,12 +39,13 @@ class _NewAddressState extends State<NewAddress> {
   }
   void _addNewAddress() async {
   if (_formKey.currentState!.validate()) {
+    String addressline = '$selectedLocation, ${_addressLineController.text}';
     // Tạo một đối tượng Address từ dữ liệu nhập vào
     final newAddress = Address(
       userId: widget.userId,
       receiver: _receiverController.text,
       phoneNumber: _phoneNumberController.text,
-      addressLine: _addressLineController.text,
+      addressLine: addressline,
     );
     
     try {

@@ -29,7 +29,8 @@ class _OrderScreensManaState extends State<OrderScreensMana> {
     try {
       await orderController.updateOrderStatus(orderId, newStatus);
       if (!isFetching) {
-        orderController.fetchOrder();// Tải lại danh sách đơn hàng mới
+        orderController.fetchOrder();
+        Navigator.pushNamed(context, OrderScreensMana.routeName);// Tải lại danh sách đơn hàng mới
       }
     } catch (error) {
       print('Error updating order status: $error');

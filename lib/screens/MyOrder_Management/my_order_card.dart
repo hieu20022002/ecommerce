@@ -86,7 +86,7 @@ class MyOrderCard extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       // Xử lý khi nhấn nút Save
-                      updateOrderStatusAndFetch(order.id, 5);
+                      updateOrderStatusAndFetch(order.id, 4);
                     },
                     child: Text('Hủy đơn hàng'),
                   ),
