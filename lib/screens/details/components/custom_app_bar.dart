@@ -1,24 +1,46 @@
+import 'package:ecommerce/models/Product.dart';
+import 'package:ecommerce/screens/Review/Feedbackpage.dart';
+import 'package:ecommerce/screens/sign_in/sign_in_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../size_config.dart';
 import '../../constants.dart';
 
-class CustomAppBar extends StatelessWidget {
-  final double rating;
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
-  CustomAppBar({required this.rating});
+  final Product product;
+
+  CustomAppBar({ required this.product});
 
   @override
-  // AppBar().preferredSize.height provide us the height that appy on our app bar
-  Size get preferredSize => Size.fromHeight(AppBar().preferredSize.height);
+  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+
+  void handleRatingTap(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      Navigator.pushNamed(context, SignInScreen.routeName);
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FeedbackPage(
+            userId: user.uid,
+            productId: product.id,
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return SafeArea(
       child: Padding(
-        padding:
-            EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+        padding: EdgeInsets.symmetric(
+          horizontal: getProportionateScreenWidth(20),
+        ),
         child: Row(
           children: [
             SizedBox(
@@ -41,26 +63,26 @@ class CustomAppBar extends StatelessWidget {
               ),
             ),
             Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
+            GestureDetector(
+              onTap: () => handleRatingTap(context),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 5,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  children: [
+
+                    const SizedBox(width: 5),
+                    SvgPicture.asset("assets/icons/Star Icon.svg"),
+                  ],
+                ),
               ),
-              child: Row(
-                children: [
-                  Text(
-                    "$rating",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  SvgPicture.asset("assets/icons/Star Icon.svg"),
-                ],
-              ),
-            )
+            ),
           ],
         ),
       ),
