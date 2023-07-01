@@ -5,12 +5,15 @@ class ShippingOption extends StatelessWidget {
   final String option;
   final String estimatedDeliveryTime;
   final double shippingFee;
+  
 
   const ShippingOption({
     required this.option,
     required this.estimatedDeliveryTime,
     required this.shippingFee,
+    
   });
+  
 
   @override
   Widget build(BuildContext context) {
